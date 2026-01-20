@@ -19,6 +19,11 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "sass": "^1.97.2",
     "typescript": "^5"
   }
 }
