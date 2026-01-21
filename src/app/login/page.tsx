@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import './page.scss';
 
-export default function Login() {
+export default function LoginPage() {
   return (
     <div className="login-page-container">
       <div className="left-container">

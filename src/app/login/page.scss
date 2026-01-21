@@ -17,12 +17,6 @@ h1 {
   color: var(--color-orange);
 }
 
-.right-container {
-  width: 67%;
-  background: url(/images/login-background.jpg) no-repeat center;
-  background-size: cover;
-}
-
 .form-container {
   display: flex;
   flex-direction: column;
@@ -86,20 +80,26 @@ input {
   text-decoration: underline;
 }
 
+.right-container {
+  width: 67%;
+  background: url(/images/login-background.jpg) no-repeat center;
+  background-size: cover;
+}
+
 @media (max-width: 900px) {
   .right-container {
     width: 50%;
   }
-    .left-container {
-        width: 50%;
-    }
+  .left-container {
+    width: 50%;
+  }
 }
 
 @media (max-width: 575px) {
-    .right-container {
-        display: none;
-    }
-    .left-container {
-        width: 100%;
-    }
+  .right-container {
+    display: none;
+  }
+  .left-container {
+    width: 100%;
+  }
 }
