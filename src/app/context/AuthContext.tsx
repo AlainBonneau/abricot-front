@@ -2,18 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { login as loginService } from '../services/auth.service';
-
-type User = {
-  id: string;
-  email: string;
-  name: string;
-};
+import { login as loginService, register as registerService } from '../services/auth.service';
+import type { User } from '../types/user';
 
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -39,7 +35,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('user', JSON.stringify(user));
 
     setUser(user);
-    router.push('/'); // Rediriger ensuite vers la page dashboard une fois qu'elle sera créée
+    router.push('/dashboard');
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    const { token, user } = await registerService(name, email, password);
+
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    setUser(user);
+    router.push('/dashboard');
   };
 
   const logout = () => {
@@ -50,14 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
