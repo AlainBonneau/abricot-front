@@ -3,7 +3,12 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 100px;
+  padding: 10px 24px;
+  gap: 10px;
+
+  @media (min-width: 1024px) {
+    padding: 10px 100px;
+  }
 }
 
 .user-logo {
@@ -19,6 +24,7 @@ header {
   transition:
     background-color 0.4s ease,
     color 0.4s ease;
+
   &:hover {
     background-color: var(--color-orange);
     color: #ffffff;
@@ -27,16 +33,16 @@ header {
 
 nav {
   height: 78px;
-  min-width: 400px;
+  width: 496px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
   gap: 16px;
+  justify-content: space-between;
 }
 
 nav a {
+  flex: 1;
   height: 100%;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,16 +50,16 @@ nav a {
   font-family: 'Inter', sans-serif;
   color: var(--color-orange);
   border-radius: 10px;
-  cursor: pointer;
   transition:
     background-color 0.4s ease,
     color 0.4s ease;
+
   &:hover {
     background-color: #000000;
     color: #ffffff;
   }
 }
 
-.nav-logo:hover {
+nav a:hover .nav-logo {
   color: #ffffff;
 }
