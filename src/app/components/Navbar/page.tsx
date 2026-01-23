@@ -30,7 +30,11 @@ export default function Navbar() {
           Projets
         </Link>
       </nav>
-      {user && <span className="user-logo">{user.name.slice(0, 2)}</span>}
+      {user && (
+        <Link href="/profil">
+          <span className="user-logo profil-active">{user.name.slice(0, 2)}</span>
+        </Link>
+      )}
     </header>
   );
 }

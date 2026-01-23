@@ -61,6 +61,11 @@ nav a {
   }
 }
 
+.profil-active {
+  background-color: var(--color-orange);
+  color: #ffffff;
+}
+
 nav a:hover .nav-logo {
   color: #ffffff;
 }

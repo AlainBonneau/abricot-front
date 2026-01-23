@@ -2,8 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import Loader from '../components/Loader/page';
 import Navbar from '../components/Navbar/page';
+import { useAuth } from '../context/AuthContext';
+import './page.scss';
 
 export default function ProfilPage() {
   const { user, isLoading } = useAuth();
@@ -15,7 +17,7 @@ export default function ProfilPage() {
     }
   }, [isLoading, user, router]);
 
-  if (isLoading) return <p>Chargement...</p>;
+  if (isLoading) return <Loader />;
   if (!user) return null;
 
   return (
