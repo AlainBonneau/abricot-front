@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
+import LayoutShell from './components/LayoutShell';
 import { AuthProvider } from './context/AuthContext';
 import './globals.scss';
 
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${manrope.variable}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <LayoutShell>{children}</LayoutShell>
+        </AuthProvider>
       </body>
     </html>
   );

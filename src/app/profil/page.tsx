@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Loader from '../components/Loader/page';
-import Navbar from '../components/Navbar/page';
 import { useAuth } from '../context/AuthContext';
 import './page.scss';
 
@@ -22,7 +21,6 @@ export default function ProfilPage() {
 
   return (
     <div>
-      <Navbar />
       <h1>Page de Profil</h1>
       <p>{user.name || 'Utilisateur inconnu'}</p>
     </div>
