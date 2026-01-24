@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Loader from '../components/Loader/page';
 import { useAuth } from '../context/AuthContext';
+import ProfileForm from './components/Profileform/ProfileForm';
 import './page.scss';
 
 export default function ProfilPage() {
@@ -20,9 +21,12 @@ export default function ProfilPage() {
   if (!user) return null;
 
   return (
-    <div>
-      <h1>Page de Profil</h1>
-      <p>{user.name || 'Utilisateur inconnu'}</p>
-    </div>
+    <main className='profil-page'>
+      <section className="profil-container">
+        <h5>Mon compte</h5>
+        <p>{user.name || 'Utilisateur inconnu'}</p>
+        <ProfileForm user={user} />
+      </section>
+    </main>
   );
 }

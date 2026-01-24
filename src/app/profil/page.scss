@@ -1,0 +1,27 @@
+.profil-page {
+  padding-top: 50px;
+}
+
+.profil-container {
+  width: 80%;
+  min-height: 50vh;
+  border-radius: 10px;
+  border: solid #e5e7eb 1px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profil-container h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.profil-container p {
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+}
