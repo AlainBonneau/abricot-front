@@ -31,6 +31,16 @@ export default function ProfileForm({ user }: { user: User }) {
       </div>
       <div className="form-group">
         <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          disabled={!isCustomizable}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div className="form-actions">
         <button
           type={isCustomizable ? 'submit' : 'button'}
           onClick={() => {
