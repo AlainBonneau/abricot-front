@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { api } from '../api/axiosConfig';
 import { login as loginService, register as registerService } from '../services/auth.service';
 import type { User } from '../types/user';
 
@@ -12,6 +13,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  setUser: (user: User | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,16 +25,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Recharger l'état au refresh
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) setUser(JSON.parse(storedUser));
-    } catch {
-      // Si localStorage contient un JSON corrompu
-      localStorage.removeItem('user');
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
+    const initAuth = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const freshUser = await getMyProfile();
+        setUser(freshUser);
+        localStorage.setItem('user', JSON.stringify(freshUser));
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -70,12 +85,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       register,
       logout,
+      setUser,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export async function getMyProfile(): Promise<User> {
+  const { data } = await api.get('/auth/profile');
+  return data.data.user;
 }
 
 export function useAuth() {
