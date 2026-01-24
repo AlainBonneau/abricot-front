@@ -1,0 +1,35 @@
+.profile-form {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.profile-form input {
+  background-color: #ffffff;
+  padding: 0 10px;
+  height: 52px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.profile-form button {
+  background-color: var(--color-black);
+  color: #ffffff;
+  border-radius: 10px;
+  height: 50px;
+  width: 242px;
+  font-family: "Inter", sans-serif;
+    font-size: 1rem;
+}
