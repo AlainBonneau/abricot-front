@@ -1,0 +1,39 @@
+.dashboard-page {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.dashboard-page h4 {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.dashboard-page p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+}
+
+.dashboard-head {
+  padding-top: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-head div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dashboard-head button {
+  background-color: var(--color-black);
+  color: #ffffff;
+  border-radius: 10px;
+  height: 50px;
+  width: 180px;
+  &:hover {
+    background-color: #000000;
+  }
+}
