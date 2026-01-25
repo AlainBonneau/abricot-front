@@ -41,7 +41,7 @@ nav {
   justify-content: space-between;
 }
 
-nav a {
+.nav-link {
   flex: 1;
   height: 100%;
   display: flex;
@@ -57,6 +57,11 @@ nav a {
 
   &:hover {
     background-color: #000000;
+    color: #ffffff;
+  }
+
+  &.active {
+    background-color: var(--color-black);
     color: #ffffff;
   }
 }

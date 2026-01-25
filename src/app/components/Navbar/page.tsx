@@ -1,17 +1,23 @@
-"use client";
+'use client';
 
 import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import './page.scss';
 
 export default function Navbar() {
   const { user } = useAuth();
+  const pathname = usePathname();
+
+  const isActive = (path: string) => pathname === path;
+
   return (
     <header>
       <Image src="/images/abricot.png" alt="Logo" width={147} height={18} />
+
       <nav>
-        <Link href="/dashboard">
+        <Link href="/dashboard" className={isActive('/dashboard') ? 'nav-link active' : 'nav-link'}>
           <Image
             src="/images/group.png"
             alt="Menu Icon"
@@ -21,7 +27,8 @@ export default function Navbar() {
           />
           Tableau de bord
         </Link>
-        <Link href="/projects">
+
+        <Link href="/projects" className={isActive('/projects') ? 'nav-link active' : 'nav-link'}>
           <Image
             src="/images/union.png"
             alt="Menu Icon"
@@ -32,9 +39,12 @@ export default function Navbar() {
           Projets
         </Link>
       </nav>
+
       {user && (
         <Link href="/profil">
-          <span className="user-logo profil-active">{user.name.slice(0, 2)}</span>
+          <span className={`user-logo ${isActive('/profil') ? 'profil-active' : ''}`}>
+            {user.name.slice(0, 2)}
+          </span>
         </Link>
       )}
     </header>
