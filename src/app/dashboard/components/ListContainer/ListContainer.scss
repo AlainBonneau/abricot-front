@@ -1,0 +1,40 @@
+.list-container {
+  margin-top: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.list-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.list-title h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.list-title p {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+// design du bouton
+.list-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 23px 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}

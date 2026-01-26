@@ -2,18 +2,43 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { api } from '../api/axiosConfig';
 import Loader from '../components/Loader/page';
 import { useAuth } from '../context/AuthContext';
+import type { AssignedTasksResponse, Task } from '../types/task';
+import ListContainer from './components/ListContainer/ListContainer';
 import './page.scss';
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const [assignedTasks, setAssignedTasks] = useState<Task[]>([]);
+  const userId = user?.id;
 
+  // appel API pour récupérer les tâches assignées à l'utilisateur
+  useEffect(() => {
+    const fetchAssignedTasks = async () => {
+      try {
+        const response = await api.get<AssignedTasksResponse>('/dashboard/assigned-tasks', {
+          params: { userId },
+        });
+
+        setAssignedTasks(response.data.data.tasks);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des tâches assignées :', error);
+      }
+    };
+
+    if (!isLoading && userId) {
+      fetchAssignedTasks();
+    }
+  }, [isLoading, userId]);
+
+  // redirection si l'utilisateur n'est pas authentifié
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [isLoading, user, router]);
 
@@ -48,6 +73,7 @@ export default function DashboardPage() {
             Kanban
           </button>
         </div>
+        <ListContainer assignedTasks={assignedTasks} />
       </section>
     </main>
   );
