@@ -38,3 +38,26 @@
     background-color: #000000;
   }
 }
+
+.list-kanban-btn-container {
+  display: flex;
+  gap: 10px;
+}
+
+.list-kanban-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: var(--color-orange);
+  padding: 14px 16px;
+  height: 45px;
+  width: 111px;
+  border-radius: 8px;
+  transition: 0.2s all ease-in-out;
+  &:hover {
+    background-color: #ffe8d9;
+  }
+}
