@@ -24,8 +24,8 @@ export default function ListContainer({ assignedTasks }: ListContainerProps) {
         {assignedTasks.length === 0 ? (
           <p className="no-tasks-message">Aucune tâche assignée pour le moment.</p>
         ) : (
-          assignedTasks.map((task, index) => (
-            <TaskComponent key={index} task={task} />
+          assignedTasks.map((task) => (
+            <TaskComponent key={task.id} task={task} />
           ))
         )}
       </div>

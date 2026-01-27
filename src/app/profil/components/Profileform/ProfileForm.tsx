@@ -3,13 +3,34 @@
 import { useAuth } from '@/app/context/AuthContext';
 import { updateUserProfile } from '@/app/services/user.service';
 import type { User } from '@/app/types/user';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './ProfileForm.scss';
+
+const splitName = (fullName?: string) => {
+  if (!fullName) return { firstName: '', lastName: '' };
+
+  const parts = fullName.trim().split(/\s+/);
+  return {
+    firstName: parts[0] || '',
+    lastName: parts.slice(1).join(' ') || '',
+  };
+};
 
 export default function ProfileForm({ user }: { user: User }) {
   const { setUser } = useAuth();
-  const [name, setName] = useState(user.name || '');
-  const [email, setEmail] = useState(user.email || '');
+
+  const initial = useMemo(() => {
+    const { firstName, lastName } = splitName(user.name);
+    return {
+      firstName,
+      lastName,
+      email: user.email || '',
+    };
+  }, [user.name, user.email]);
+
+  const [firstName, setFirstName] = useState(initial.firstName);
+  const [lastName, setLastName] = useState(initial.lastName);
+  const [email, setEmail] = useState(initial.email);
   const [isCustomizable, setIsCustomizable] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -25,12 +46,17 @@ export default function ProfileForm({ user }: { user: User }) {
 
     try {
       setIsSaving(true);
-      const updatedUser = await updateUserProfile(name, email);
+
+      const fullName = `${firstName} ${lastName}`.trim().replace(/\s+/g, ' ');
+      const updatedUser = await updateUserProfile(fullName, email);
 
       setUser(updatedUser);
 
-      setName(updatedUser.name || '');
+      const { firstName: newFirst, lastName: newLast } = splitName(updatedUser.name);
+      setFirstName(newFirst);
+      setLastName(newLast);
       setEmail(updatedUser.email || '');
+
       setIsCustomizable(false);
     } catch (err) {
       console.log(err);
@@ -42,13 +68,24 @@ export default function ProfileForm({ user }: { user: User }) {
   return (
     <form className="profile-form" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="name">Nom</label>
+        <label htmlFor="firstName">Prénom</label>
         <input
-          id="name"
+          id="firstName"
           type="text"
-          value={name}
+          value={firstName}
           disabled={!isCustomizable || isSaving}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setFirstName(e.target.value)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="lastName">Nom</label>
+        <input
+          id="lastName"
+          type="text"
+          value={lastName}
+          disabled={!isCustomizable || isSaving}
+          onChange={(e) => setLastName(e.target.value)}
         />
       </div>
 
@@ -68,7 +105,7 @@ export default function ProfileForm({ user }: { user: User }) {
           {isSaving ? 'Enregistrement…' : 'Enregistrer'}
         </button>
       ) : (
-        <button type="button" onClick={handleIsCustomizable}>
+        <button type="button" onClick={handleIsCustomizable} disabled={isSaving}>
           Modifier les informations
         </button>
       )}

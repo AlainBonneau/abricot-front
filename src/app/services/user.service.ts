@@ -3,5 +3,5 @@ import { api } from '../api/axiosConfig';
 
 export async function updateUserProfile(name: string, email: string): Promise<User> {
   const { data } = await api.put('/auth/profile', { name, email });
-  return data.data.user; // ✅
+  return data.data.user;
 }
