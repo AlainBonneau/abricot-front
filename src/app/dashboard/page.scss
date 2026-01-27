@@ -44,7 +44,7 @@
   gap: 10px;
 }
 
-.list-kanban-container button {
+.dashboard-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,4 +60,8 @@
   &:hover {
     background-color: #ffe8d9;
   }
+}
+
+.dashboard-btn.btn-active {
+  background-color: #ffe8d9;
 }

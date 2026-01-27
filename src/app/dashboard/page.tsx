@@ -2,16 +2,18 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from '../components/Loader/page';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../context/TasksContext';
+import KanbanContainer from './components/KanbanContainer/KanbanContainer';
 import ListContainer from './components/ListContainer/ListContainer';
 import './page.scss';
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
 
   const { assignedTasks, fetchAssignedTasks, isLoading: tasksLoading, error } = useTasks();
 
@@ -44,11 +46,17 @@ export default function DashboardPage() {
 
       <section className="list-kanban-container">
         <div className="list-kanban-btn-container">
-          <button>
+          <button
+            className={'dashboard-btn ' + (viewMode === 'list' ? 'btn-active' : '')}
+            onClick={() => setViewMode('list')}
+          >
             <Image src="/images/list-img.png" alt="logo du bouton liste" width={16} height={16} />
             Liste
           </button>
-          <button>
+          <button
+            className={'dashboard-btn ' + (viewMode === 'kanban' ? 'btn-active' : '')}
+            onClick={() => setViewMode('kanban')}
+          >
             <Image
               src="/images/kanban-img.png"
               alt="logo du bouton kanban"
@@ -59,7 +67,11 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <ListContainer assignedTasks={assignedTasks} />
+        {viewMode === 'list' ? (
+          <ListContainer assignedTasks={assignedTasks} />
+        ) : (
+          <KanbanContainer />
+        )}
       </section>
     </main>
   );
