@@ -29,6 +29,12 @@ export type TaskComment = {
   updatedAt: string; // ISO
 };
 
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export type Task = {
   id: string;
   title: string;
@@ -37,6 +43,7 @@ export type Task = {
   priority: TaskPriority;
   dueDate: string; // ISO
   projectId: string;
+  project: Project;
   creatorId: string;
   assignees: TaskAssignee[];
   comments: TaskComment[];

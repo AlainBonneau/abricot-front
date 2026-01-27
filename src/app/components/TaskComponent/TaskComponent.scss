@@ -1,0 +1,106 @@
+.task-component {
+  width: 90%;
+  border: 1px solid var(--color-grey);
+  border-radius: 10px;
+  padding: 25px 40px;
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-component-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.task-component-left h5 {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.task-component-left p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.task-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.task-info p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 14px;
+  margin-right: 14px;
+  border-right: 1px solid #d1d5db;
+}
+
+
+.task-info p:last-child {
+  border-right: none;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.task-component-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+}
+
+.status-badge {
+  padding: 4px 16px;
+  height: 25px;
+  min-width: 90px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-todo {
+  background-color: #ffe0e0;
+  color: #ef4444;
+}
+
+.status-in_progress {
+  background-color: #fff0d7;
+  color: #e08d00;
+}
+
+.status-done {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.task-component-right a {
+  height: 50px;
+  min-width: 120px;
+  padding: 0 26px;
+  background-color: var(--color-black);
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+
+  &:hover {
+    opacity: 0.92;
+  }
+}
+
+.lucide-logo {
+  width: 16px;
+  height: 16px;
+}

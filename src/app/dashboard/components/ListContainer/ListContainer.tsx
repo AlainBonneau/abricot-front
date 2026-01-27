@@ -1,6 +1,7 @@
 'use client';
 
 import type { Task } from '@/app/types/task';
+import TaskComponent from '@/app/components/TaskComponent/TaskComponent';
 import './ListContainer.scss';
 
 type ListContainerProps = {
@@ -19,11 +20,15 @@ export default function ListContainer({ assignedTasks }: ListContainerProps) {
         <input type="search" className="list-search" placeholder="Rechercher une tâche" />
       </div>
 
-      <ul className="task-list">
-        {assignedTasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
-        ))}
-      </ul>
+      <div className="task-list">
+        {assignedTasks.length === 0 ? (
+          <p className="no-tasks-message">Aucune tâche assignée pour le moment.</p>
+        ) : (
+          assignedTasks.map((task, index) => (
+            <TaskComponent key={index} task={task} />
+          ))
+        )}
+      </div>
     </section>
   );
 }

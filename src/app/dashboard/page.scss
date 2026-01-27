@@ -8,17 +8,17 @@
   font-size: 1.5rem;
 }
 
-.dashboard-page p {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.125rem;
-}
-
 .dashboard-head {
   padding-top: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
+}
+
+.dashboard-head p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
 }
 
 .dashboard-head div {
