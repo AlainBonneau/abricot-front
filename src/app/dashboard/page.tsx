@@ -70,7 +70,7 @@ export default function DashboardPage() {
         {viewMode === 'list' ? (
           <ListContainer assignedTasks={assignedTasks} />
         ) : (
-          <KanbanContainer />
+          <KanbanContainer tasks={assignedTasks} />
         )}
       </section>
     </main>

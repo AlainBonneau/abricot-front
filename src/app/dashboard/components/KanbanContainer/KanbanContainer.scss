@@ -1,0 +1,37 @@
+.kanban-container {
+  margin-top: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.kanban-container h5 {
+  font-size: 1.125rem;
+}
+
+.task-counter {
+  background-color: #e5e7eb;
+  padding: 4px 16px;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  color: #6b7280;
+}
+
+.tasks-list-kanban {
+  background-color: #ffffff;
+  border: 1px solid #ffe0e0;
+  border-radius: 10px;
+}
+
+.todo-container {
+  width: 30%;
+}
+
+.in-progress-container {
+  width: 30%;
+}
+
+.done-container {
+  width: 30%;
+}
