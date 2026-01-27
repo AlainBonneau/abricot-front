@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import LayoutShell from './components/LayoutShell';
 import { AuthProvider } from './context/AuthContext';
+import { TasksProvider } from './context/TasksContext';
 import './globals.scss';
 
 const manrope = Manrope({
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${manrope.variable}`}>
         <AuthProvider>
-          <LayoutShell>{children}</LayoutShell>
+          <TasksProvider>
+            <LayoutShell>{children}</LayoutShell>
+          </TasksProvider>
         </AuthProvider>
       </body>
     </html>
