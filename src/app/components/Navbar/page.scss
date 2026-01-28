@@ -6,6 +6,7 @@ header {
   padding: 10px 24px;
   gap: 10px;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
 
   @media (min-width: 1024px) {
     padding: 10px 100px;
@@ -73,4 +74,140 @@ nav {
 
 nav a:hover .nav-logo {
   color: #ffffff;
+}
+
+/* Mobile / Burger */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.burger-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.burger {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-black);
+  margin: 0 auto;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.burger::before,
+.burger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 2px;
+  background: var(--color-black);
+  transition:
+    transform 0.25s ease,
+    top 0.25s ease,
+    bottom 0.25s ease;
+}
+
+.burger::before {
+  top: -7px;
+}
+
+.burger::after {
+  bottom: -7px;
+}
+
+.burger.open {
+  background: transparent;
+}
+
+.burger.open::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.burger.open::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 24px;
+  left: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 10px;
+  z-index: 50;
+}
+
+.mobile-link {
+  display: flex;
+  padding: 12px 12px;
+  border-radius: 10px;
+  color: var(--color-black);
+  font-family: 'Inter', sans-serif;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.mobile-link:hover {
+  background: #f3f4f6;
+}
+
+.mobile-link.active {
+  background: var(--color-black);
+  color: #ffffff;
+}
+
+@media (max-width: 800px) {
+  nav {
+    display: none;
+  }
+
+  .burger-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  header {
+    padding: 10px 16px;
+  }
+
+  .user-logo {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 10px 12px;
+  }
+
+  .mobile-menu {
+    left: 12px;
+    right: 12px;
+  }
 }
