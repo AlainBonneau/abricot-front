@@ -1,7 +1,7 @@
 'use client';
 
 import type { Task } from '@/app/types/task';
-import TaskComponent from '@/app/components/TaskComponent/TaskComponent';
+import ListTaskComponent from './ListTaskComponent/ListTaskComponent';
 import './ListContainer.scss';
 
 type ListContainerProps = {
@@ -25,7 +25,7 @@ export default function ListContainer({ assignedTasks }: ListContainerProps) {
           <p className="no-tasks-message">Aucune tâche assignée pour le moment.</p>
         ) : (
           assignedTasks.map((task) => (
-            <TaskComponent key={task.id} task={task} />
+            <ListTaskComponent key={task.id} task={task} />
           ))
         )}
       </div>

@@ -2,9 +2,9 @@ import type { Task } from '@/app/types/task';
 import { dateFormatter, taskStatusFormatter } from '@/app/utils/function';
 import { CalendarDays, FolderOpen, MessageSquareText } from 'lucide-react';
 import Link from 'next/link';
-import './TaskComponent.scss';
+import './ListTaskComponent.scss';
 
-export default function TaskComponent({ task }: { task: Task }) {
+export default function ListTaskComponent({ task }: { task: Task }) {
   console.log(task);
   return (
     <div className="task-component">

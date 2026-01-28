@@ -1,11 +1,12 @@
 import type { Task } from '@/app/types/task';
 import './KanbanContainer.scss';
+import KanbanTaskContainer from './KanbanTaskContainer/KanbanTaskContainer';
 
 export default function KanbanContainer({ tasks }: { tasks: Task[] }) {
   return (
     <section className="kanban-container">
       <div className="tasks-list-kanban todo-container">
-        <h5>
+        <h5 className='kanban-title'>
           À faire{' '}
           <span className="task-counter">
             {tasks.filter((task) => task.status === 'TODO').length}
@@ -15,15 +16,12 @@ export default function KanbanContainer({ tasks }: { tasks: Task[] }) {
           {tasks
             .filter((task) => task.status === 'TODO')
             .map((task) => (
-              <div key={task.id} className="task-card">
-                <h6>{task.title}</h6>
-                <p>{task.description}</p>
-              </div>
+              <KanbanTaskContainer key={task.id} tasks={[task]} />
             ))}
         </div>
       </div>
       <div className="tasks-list-kanban in-progress-container">
-        <h5>
+        <h5 className='kanban-title'>
           En cours{' '}
           <span className="task-counter">
             {tasks.filter((task) => task.status === 'IN_PROGRESS').length}
@@ -33,15 +31,12 @@ export default function KanbanContainer({ tasks }: { tasks: Task[] }) {
           {tasks
             .filter((task) => task.status === 'IN_PROGRESS')
             .map((task) => (
-              <div key={task.id} className="task-card">
-                <h6>{task.title}</h6>
-                <p>{task.description}</p>
-              </div>
+              <KanbanTaskContainer key={task.id} tasks={[task]} />
             ))}
         </div>
       </div>
       <div className="tasks-list-kanban done-container">
-        <h5>
+        <h5 className='kanban-title'>
           Terminé{' '}
           <span className="task-counter">
             {tasks.filter((task) => task.status === 'DONE').length}
@@ -51,10 +46,7 @@ export default function KanbanContainer({ tasks }: { tasks: Task[] }) {
           {tasks
             .filter((task) => task.status === 'DONE')
             .map((task) => (
-              <div key={task.id} className="task-card">
-                <h6>{task.title}</h6>
-                <p>{task.description}</p>
-              </div>
+              <KanbanTaskContainer key={task.id} tasks={[task]} />
             ))}
         </div>
       </div>
