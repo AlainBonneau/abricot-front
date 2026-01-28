@@ -40,3 +40,16 @@
   border-radius: 8px;
   font-size: 0.875rem;
 }
+
+@media (max-width: 700px) {
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .list-search {
+    width: 100%;
+    justify-content: center;
+  }
+}
