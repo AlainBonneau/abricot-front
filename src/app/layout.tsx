@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import LayoutShell from './components/LayoutShell';
 import { AuthProvider } from './context/AuthContext';
+import { ProjectsProvider } from './context/ProjectsContext';
 import { TasksProvider } from './context/TasksContext';
 import './globals.scss';
 
@@ -25,9 +26,11 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${manrope.variable}`}>
         <AuthProvider>
-          <TasksProvider>
-            <LayoutShell>{children}</LayoutShell>
-          </TasksProvider>
+          <ProjectsProvider>
+            <TasksProvider>
+              <LayoutShell>{children}</LayoutShell>
+            </TasksProvider>
+          </ProjectsProvider>
         </AuthProvider>
       </body>
     </html>
