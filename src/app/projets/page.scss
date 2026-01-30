@@ -8,9 +8,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 40px;
 }
 
-.page-title  {
+.page-title {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -35,5 +36,30 @@
   width: 180px;
   &:hover {
     background-color: #000000;
+  }
+}
+
+.projets-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 16px;
+  column-gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .projets-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .projets-list {
+    grid-template-columns: 1fr;
+  }
+
+  .projets-page-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
 }

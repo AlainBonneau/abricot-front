@@ -18,3 +18,10 @@ export function taskStatusFormatter(status: string): string {
       return 'Inconnu';
   }
 }
+
+// Fonction pour afficher uniquement la première lettre du prénom et la première lettre du nom
+export function getInitials(name: string): string {
+  const names = name.split(' ');
+  const initials = names.map((n) => n.charAt(0).toUpperCase()).join('');
+  return initials;
+}

@@ -2,6 +2,7 @@
 
 import Loader from '@/app/components/Loader/page';
 import { useProjects } from '@/app/context/ProjectsContext';
+import ProjectComponent from './components/ProjectComponent/ProjectComponent';
 import './page.scss';
 
 export default function ProjectsPage() {
@@ -11,21 +12,22 @@ export default function ProjectsPage() {
   if (error) return <p>{error}</p>;
 
   return (
-    <main>
-      <h1>Mes projets</h1>
+    <main className="projets-page">
+      <div className="projets-page-head">
+        <div className="page-title">
+          <h4>Mes projets</h4>
+          <p>Gérez vos projets</p>
+        </div>
+        <button>+ Créer un projet</button>
+      </div>
 
-      {projects.length === 0 ? (
-        <p>Aucun projetn pour le momet</p>
-      ) : (
-        <ul>
-          {projects.map((project) => (
-            <li key={project.id}>
-              <h4>{project.name}</h4>
-              <p>{project.description}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <section className="projets-list">
+        {projects.length === 0 ? (
+          <p>Aucun projet trouvé.</p>
+        ) : (
+          projects.map((project) => <ProjectComponent key={project.id} project={project} />)
+        )}
+      </section>
     </main>
   );
 }
