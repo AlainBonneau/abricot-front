@@ -1,0 +1,39 @@
+.projets-page {
+  padding-top: 70px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.projets-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title  {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.page-title h4 {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.page-title p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+}
+
+.projets-page-head button {
+  background-color: var(--color-black);
+  color: #ffffff;
+  font-size: 1rem;
+  border-radius: 10px;
+  height: 50px;
+  width: 180px;
+  &:hover {
+    background-color: #000000;
+  }
+}

@@ -21,7 +21,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/dashboard', label: 'Tableau de bord', icon: '/images/group.png' },
-    { href: '/projects', label: 'Projets', icon: '/images/union.png' },
+    { href: '/projets', label: 'Projets', icon: '/images/union.png' },
   ];
 
   return (
