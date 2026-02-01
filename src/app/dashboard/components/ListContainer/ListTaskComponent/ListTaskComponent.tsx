@@ -5,7 +5,6 @@ import Link from 'next/link';
 import './ListTaskComponent.scss';
 
 export default function ListTaskComponent({ task }: { task: Task }) {
-  console.log(task);
   return (
     <div className="task-component">
       <div className="task-component-left">

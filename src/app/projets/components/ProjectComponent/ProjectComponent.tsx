@@ -1,5 +1,6 @@
 import type { Project } from '@/app/types/project';
 import { getInitials } from '@/app/utils/function';
+import Link from 'next/link';
 import './ProjectComponent.scss';
 
 function clamp(n: number, min: number, max: number) {
@@ -14,6 +15,7 @@ export default function ProjectComponent({ project }: { project: Project }) {
     project._count.tasks === 0 ? 0 : Math.round((doneTasks / project._count.tasks) * 100);
 
   return (
+    <Link href={`/projets/${project.id}`}>
     <article className="project-component">
       <div className="project-component-head">
         <h4 className="project-title">{project.name}</h4>
@@ -68,5 +70,6 @@ export default function ProjectComponent({ project }: { project: Project }) {
         </div>
       </footer>
     </article>
+    </Link>
   );
 }

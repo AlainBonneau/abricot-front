@@ -62,3 +62,5 @@ export type ApiResponse<T> = {
 export type AssignedTasksResponse = ApiResponse<{
   tasks: Task[];
 }>;
+
+export type TasksOnlyResponse = { success: boolean; message: string; data: { tasks: Task[] } };

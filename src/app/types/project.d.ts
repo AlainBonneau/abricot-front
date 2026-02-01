@@ -1,3 +1,5 @@
+import type { Task } from "./task";
+
 export type User = {
   id: string;
   email: string;
@@ -34,5 +36,14 @@ export type ProjectsResponse = {
   message: string;
   data: {
     projects: Project[];
+  };
+};
+
+export type ProjectTasksResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    project: Project;
+    tasks: Task[];
   };
 };
