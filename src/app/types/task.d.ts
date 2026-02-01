@@ -1,14 +1,17 @@
-// types/task.ts
+// types/task.d.ts
+import type { ApiResponse } from './api';
 
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 
+// Si tu veux éviter la duplication, tu peux importer User depuis project.d.ts
+// import type { User } from './project';
 export type User = {
   id: string;
   email: string;
   name: string;
-  createdAt: string; // ISO
-  updatedAt: string; // ISO
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TaskAssignee = {
@@ -16,7 +19,7 @@ export type TaskAssignee = {
   userId: string;
   taskId: string;
   user: User;
-  assignedAt: string; // ISO
+  assignedAt: string;
 };
 
 export type TaskComment = {
@@ -25,15 +28,15 @@ export type TaskComment = {
   taskId: string;
   authorId: string;
   author: User;
-  createdAt: string; // ISO
-  updatedAt: string; // ISO
+  createdAt: string;
+  updatedAt: string;
 };
 
-interface Project {
+export type TaskProject = {
   id: string;
   name: string;
   description: string;
-}
+};
 
 export type Task = {
   id: string;
@@ -41,26 +44,22 @@ export type Task = {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
-  dueDate: string; // ISO
+  dueDate: string;
   projectId: string;
-  project: Project;
+  project: TaskProject;
   creatorId: string;
   assignees: TaskAssignee[];
   comments: TaskComment[];
-  createdAt: string; // ISO
-  updatedAt: string; // ISO
+  createdAt: string;
+  updatedAt: string;
 };
 
-// Réponse API générique (utile partout)
-export type ApiResponse<T> = {
-  success: boolean;
-  message: string;
-  data: T;
-};
-
-// Réponse spécifique de /dashboard/assigned-tasks
-export type AssignedTasksResponse = ApiResponse<{
+// GET /projects/:id/tasks
+export type TasksOnlyResponse = ApiResponse<{
   tasks: Task[];
 }>;
 
-export type TasksOnlyResponse = { success: boolean; message: string; data: { tasks: Task[] } };
+// GET /dashboard/assigned-tasks
+export type AssignedTasksResponse = ApiResponse<{
+  tasks: Task[];
+}>;

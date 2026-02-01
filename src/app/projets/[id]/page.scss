@@ -1,0 +1,74 @@
+.projet-page {
+  padding-top: 70px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.projet-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projet-page-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.head-left-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.head-left-title h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.head-left-title button {
+  background-color: transparent;
+  font-size: 0.875rem;
+  color: var(--color-orange);
+  text-decoration: underline;
+  border: none;
+  cursor: pointer;
+}
+
+.projet-page-head-left p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.projet-page-head-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.projet-page-head-right button {
+  background-color: var(--color-black);
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 12px 20px;
+  height: 50px;
+  border-radius: 10px;
+  transition: 0.3s;
+  &:hover {
+    background-color: #333333;
+  }
+}
+
+.projet-page-head-right .create-task-ai-btn {
+  background-color: var(--color-orange);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  &:hover {
+    background-color: #ff7a00;
+  }
+}

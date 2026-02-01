@@ -1,4 +1,5 @@
-import type { Task } from "./task";
+// types/project.d.ts
+import type { ApiResponse } from './api';
 
 export type User = {
   id: string;
@@ -31,19 +32,12 @@ export type Project = {
   };
 };
 
-export type ProjectsResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    projects: Project[];
-  };
-};
+// GET /projects
+export type ProjectsResponse = ApiResponse<{
+  projects: Project[];
+}>;
 
-export type ProjectTasksResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    project: Project;
-    tasks: Task[];
-  };
-};
+// GET /projects/:id
+export type ProjectResponse = ApiResponse<{
+  project: Project;
+}>;
