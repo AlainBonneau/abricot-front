@@ -8,10 +8,10 @@ function clamp(n: number, min: number, max: number) {
 
 export default function ProjectComponent({ project }: { project: Project }) {
   // Données fake (en attendant l'API)
-  const totalTasks: number = 4;
   const doneTasks: number = 2;
 
-  const progressPercent = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
+  const progressPercent =
+    project._count.tasks === 0 ? 0 : Math.round((doneTasks / project._count.tasks) * 100);
 
   return (
     <article className="project-component">
@@ -41,7 +41,7 @@ export default function ProjectComponent({ project }: { project: Project }) {
         </div>
 
         <p className="progression-sub">
-          {doneTasks}/{totalTasks} tâches terminées
+          {doneTasks}/{project._count.tasks} tâches terminées
         </p>
       </section>
 

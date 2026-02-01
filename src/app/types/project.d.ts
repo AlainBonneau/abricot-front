@@ -24,6 +24,9 @@ export type Project = {
   members: ProjectMember[];
   createdAt: string;
   updatedAt: string;
+  _count: {
+    tasks: number;
+  };
 };
 
 export type ProjectsResponse = {
