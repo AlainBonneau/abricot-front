@@ -7,6 +7,7 @@ import type { TasksOnlyResponse } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ContributorComponent from './components/ContributorComponent/ContributorComponent';
 import './page.scss';
 
 export default function ProjectPage() {
@@ -64,6 +65,9 @@ export default function ProjectPage() {
             IA
           </button>
         </div>
+      </section>
+      <section className="contributor-container">
+        <ContributorComponent owner={project?.owner} members={project?.members} />
       </section>
     </main>
   );

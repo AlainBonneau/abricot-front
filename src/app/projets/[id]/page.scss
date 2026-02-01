@@ -56,6 +56,8 @@
   height: 50px;
   border-radius: 10px;
   transition: 0.3s;
+  display: flex;
+  align-items: center;
   &:hover {
     background-color: #333333;
   }
@@ -65,8 +67,6 @@
   background-color: var(--color-orange);
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
   gap: 10px;
   &:hover {
     background-color: #ff7a00;
