@@ -1,4 +1,5 @@
 import type { Project } from '@/app/types/project';
+import { getInitials } from '@/app/utils/function';
 import './ContributorComponent.scss';
 
 type Props = {
@@ -9,19 +10,20 @@ type Props = {
 export default function ContributorComponent({ owner, members }: Props) {
   return (
     <div className="contributor-component">
-      <h3>Contributeurs</h3>
-
-      <div className="contributors-list">
-        {owner && (
-          <div className="contributor-item">
-            <span className="contributor-role">Propriétaire</span>
-            <span className="contributor-name">{owner.name}</span>
-          </div>
-        )}
+      <div className="contributor-left">
+        <h5>Contributeurs</h5>
+        <p>{members ? members.length + 1 : 1} personnes</p>
+      </div>
+      <div className="contributor-right">
+        <span className="avatar avatar-owner" title={owner?.name}>
+          {getInitials(owner?.name || '')}
+        </span>
+        <span className="owner-pill">Propriétaire</span>
 
         {members?.map((member) => (
-          <div key={member.id} className="contributor-item">
-            <span className="contributor-name">{member.user.name}</span>
+          <div key={member.id} className='avatar-container'>
+            <span className="avatar" title={member.user.name}>{getInitials(member.user.name)}</span>
+            <span className='avatar-name'>{member.user.name}</span>
           </div>
         ))}
       </div>

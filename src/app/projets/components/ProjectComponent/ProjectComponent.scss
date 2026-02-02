@@ -109,6 +109,7 @@
   height: 27px;
   padding: 8px 4px;
   border-radius: 13px;
+  border: 1px solid #ffffff;
   background-color: var(--color-grey);
   color: #111827;
   display: flex;
@@ -119,6 +120,7 @@
 
 .avatar-owner {
   background-color: #ffe8d9;
+  border: none;
   color: #111827;
 }
 
