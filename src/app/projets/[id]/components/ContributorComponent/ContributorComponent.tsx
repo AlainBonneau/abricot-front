@@ -15,14 +15,14 @@ export default function ContributorComponent({ owner, members }: Props) {
         <p>{members ? members.length + 1 : 1} personnes</p>
       </div>
       <div className="contributor-right">
-        <span className="avatar avatar-owner" title={owner?.name}>
+        <span className="contributor-avatar avatar-owner" title={owner?.name}>
           {getInitials(owner?.name || '')}
         </span>
-        <span className="owner-pill">Propriétaire</span>
+        <span className="owner-pill-contributor">Propriétaire</span>
 
         {members?.map((member) => (
           <div key={member.id} className='avatar-container'>
-            <span className="avatar" title={member.user.name}>{getInitials(member.user.name)}</span>
+            <span className="contributor-avatar" title={member.user.name}>{getInitials(member.user.name)}</span>
             <span className='avatar-name'>{member.user.name}</span>
           </div>
         ))}

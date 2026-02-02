@@ -31,6 +31,7 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
                 </option>
               ))}
           </select>
+          <input type="search" className="task-search" placeholder="Rechercher une tâche" />
         </div>
       </div>
     </div>
