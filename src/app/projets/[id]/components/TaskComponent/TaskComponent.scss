@@ -1,0 +1,56 @@
+.projet-task-head {
+  padding-top: 40px;
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projet-task-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.projet-task-head-left h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.projet-task-head-left p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.projet-task-head-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.projet-task-head-right button {
+  color: var(--color-orange);
+  font-size: 0.875rem;
+  background-color: transparent;
+  padding: 14px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: 0.3s;
+  &:hover {
+    background-color: #ffe8d9;
+  }
+}
+
+.projet-task-head-right .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.projet-task-head-right button.active {
+  background-color: #ffe8d9;
+}

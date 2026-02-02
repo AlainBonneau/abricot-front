@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ContributorComponent from './components/ContributorComponent/ContributorComponent';
+import TaskComponent from './components/TaskComponent/TaskComponent';
 import './page.scss';
 
 export default function ProjectPage() {
@@ -68,6 +69,9 @@ export default function ProjectPage() {
       </section>
       <section className="contributor-container">
         <ContributorComponent owner={project?.owner} members={project?.members} />
+      </section>
+      <section className="tasks-container">
+        <TaskComponent tasks={tasks} />
       </section>
     </main>
   );
