@@ -15,7 +15,7 @@ export default function ContributorComponent({ owner, members }: Props) {
         <p>{members ? members.length + 1 : 1} personnes</p>
       </div>
       <div className="contributor-right">
-        <span className="contributor-avatar avatar-owner" title={owner?.name}>
+        <span className="contributor-avatar contributor-avatar-owner" title={owner?.name}>
           {getInitials(owner?.name || '')}
         </span>
         <span className="owner-pill-contributor">Propriétaire</span>

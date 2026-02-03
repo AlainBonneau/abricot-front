@@ -8,7 +8,7 @@ function clamp(n: number, min: number, max: number) {
 }
 
 export default function ProjectComponent({ project }: { project: Project }) {
-  // Données fake (en attendant l'API)
+  // Données fake (en attendant l'API) à mettre dans un useEffect plus tard
   const doneTasks: number = 2;
 
   const progressPercent =
