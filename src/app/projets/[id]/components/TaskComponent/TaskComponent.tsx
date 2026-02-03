@@ -1,6 +1,7 @@
 import type { Task } from '@/app/types/task';
 import { CalendarDays, SquareCheckBig } from 'lucide-react';
 import './TaskComponent.scss';
+import Tasks from './Tasks';
 
 export default function TaskComponent({ tasks }: { tasks: Task[] }) {
   return (
@@ -34,6 +35,7 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
           <input type="search" className="task-search" placeholder="Rechercher une tâche" />
         </div>
       </div>
+      <Tasks tasks={tasks} />
     </div>
   );
 }
