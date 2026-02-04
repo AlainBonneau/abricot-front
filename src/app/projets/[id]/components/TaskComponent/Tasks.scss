@@ -1,45 +1,224 @@
 .projet-tasks-component {
   width: 80%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .projet-task-item {
-  height: 260px;
-  border: 1px solid var(--color-grey);
-  border-radius: 10px;
-  padding: 25px 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  padding: 24px 28px;
+  height: auto;
 }
 
 .projet-task-items-head {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .item-title {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
 }
 
 .item-title h5 {
   font-weight: 600;
   font-size: 1.125rem;
+  color: #000000;
 }
 
-.item-title span {
+/* Badge status */
+.item-title span,
+.status-pill {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  width: 75px;
-  height: 25px;
+  padding: 4px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-todo {
+  background-color: #ffe0e0;
+  color: #ef4444;
+}
+
+.status-in_progress {
+  background-color: #fff0d7;
+  color: #e08d00;
+}
+
+.status-done {
+  background-color: #f1fff7;
+  color: #27ae60;
+}
+
+/* description */
+.item-description {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* échéance*/
+.due-date-paragraph {
+  margin-top: 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    color: var(--color-black);
+  }
+}
+
+.due-date-paragraph .calendar-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-black);
+}
+
+/* Assignés */
+.assigned-to {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  p {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+.assigned-to-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.assigned-chip-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.assigned-chip {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+  background-color: var(--color-grey);
   border-radius: 50px;
-  background-color: aquamarine;
+  padding: 4px 16px;
+}
+
+.assigned-chip.initials {
+  color: #0f0f0f;
+  border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.item-description {
+/* Commentaires */
+
+.comments-toggle {
+  margin-top: 18px;
+  padding: 15px 14px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
+  background-color: transparent;
+  border-top: 1px solid #e5e7eb;
+  cursor: pointer;
+  color: var(--color-black);
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  svg {
+    transition: transform 0.25s ease;
+  }
+
+  &.open svg {
+    transform: rotate(180deg);
+  }
+}
+
+.comments-container {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease;
+
+  &.open {
+    margin-top: 12px;
+    max-height: 600px;
+    opacity: 1;
+  }
+}
+
+.no-comments {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
   color: #6b7280;
+  padding: 12px;
+  text-align: center;
+}
+
+.comment-item {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+
+  & + & {
+    margin-top: 10px;
+  }
+}
+
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.comment-author {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.comment-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.comment-content {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.4;
 }
