@@ -222,3 +222,74 @@
   color: #374151;
   line-height: 1.4;
 }
+
+/* Tablet */
+@media (max-width: 1000px) {
+  .projet-tasks-component {
+    width: 90%;
+  }
+
+  .projet-task-item {
+    padding: 20px 22px;
+  }
+
+  .item-title h5 {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .projet-tasks-component {
+    width: 100%;
+    padding: 0 12px;
+  }
+
+  .projet-task-item {
+    padding: 16px;
+  }
+
+  .item-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .item-title h5 {
+    font-size: 0.95rem;
+  }
+
+  .item-title span {
+    font-size: 0.75rem;
+    padding: 3px 12px;
+  }
+
+  .item-description {
+    font-size: 0.8rem;
+  }
+
+  .due-date-paragraph {
+    font-size: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .assigned-to {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .assigned-chip {
+    font-size: 0.75rem;
+    padding: 3px 12px;
+  }
+
+  .comments-toggle {
+    font-size: 0.8rem;
+    padding: 12px 8px;
+  }
+
+  .comment-content {
+    font-size: 0.8rem;
+  }
+}
