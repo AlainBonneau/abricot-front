@@ -1,6 +1,7 @@
 'use client';
 
 import type { Task } from '@/app/types/task';
+import { taskStatusFormatter } from '@/app/utils/function';
 import { CalendarDays, SquareCheckBig } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import './TaskComponent.scss';
@@ -63,7 +64,7 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
             <option value="all">Tous</option>
             {uniqueStatuses.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {taskStatusFormatter(status)}
               </option>
             ))}
           </select>
