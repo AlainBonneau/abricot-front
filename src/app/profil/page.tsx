@@ -21,12 +21,12 @@ export default function ProfilPage() {
   if (!user) return null;
 
   return (
-    <main className='profil-page'>
+    <div className='profil-page'>
       <section className="profil-container">
         <h5>Mon compte</h5>
         <p>{user.name || 'Utilisateur inconnu'}</p>
         <ProfileForm user={user} />
       </section>
-    </main>
+    </div>
   );
 }

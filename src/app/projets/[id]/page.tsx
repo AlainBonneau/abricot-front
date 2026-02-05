@@ -50,7 +50,7 @@ export default function ProjectPage() {
   if (error) return <p>{error}</p>;
 
   return (
-    <main className="projet-page">
+    <div className="projet-page">
       <section className="projet-page-head">
         <div className="projet-page-head-left">
           <div className="head-left-title">
@@ -73,6 +73,6 @@ export default function ProjectPage() {
       <section className="tasks-container">
         <TaskComponent tasks={tasks} />
       </section>
-    </main>
+    </div>
   );
 }

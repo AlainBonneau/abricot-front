@@ -12,7 +12,7 @@ export default function ProjectsPage() {
   if (error) return <p>{error}</p>;
 
   return (
-    <main className="projets-page">
+    <div className="projets-page">
       <div className="projets-page-head">
         <div className="page-title">
           <h4>Mes projets</h4>
@@ -28,6 +28,6 @@ export default function ProjectsPage() {
           projects.map((project) => <ProjectComponent key={project.id} project={project} />)
         )}
       </section>
-    </main>
+    </div>
   );
 }

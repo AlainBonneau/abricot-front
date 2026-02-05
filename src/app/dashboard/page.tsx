@@ -33,7 +33,7 @@ export default function DashboardPage() {
   if (isLoading || !user || tasksLoading) return <Loader />;
 
   return (
-    <main className="dashboard-page">
+    <div className="dashboard-page">
       <section className="dashboard-head">
         <div>
           <h4>Tableau de bord</h4>
@@ -73,6 +73,6 @@ export default function DashboardPage() {
           <KanbanContainer tasks={assignedTasks} />
         )}
       </section>
-    </main>
+    </div>
   );
 }

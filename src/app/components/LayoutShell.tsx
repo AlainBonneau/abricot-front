@@ -2,6 +2,7 @@
 
 import Navbar from '@/app/components/Navbar/page';
 import { usePathname } from 'next/navigation';
+import Footer from './Footer/Footer';
 
 const HIDE_NAV_ON = ['/login', '/register'];
 
@@ -12,7 +13,8 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   return (
     <>
       {!hideNavbar && <Navbar />}
-      {children}
+      <main className="layout">{children}</main>
+      {!hideNavbar && <Footer />}
     </>
   );
 }
