@@ -27,6 +27,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [assignees, setAssignees] = useState<string[]>([]);
+  const [isAssigneeOpen, setIsAssigneeOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,7 +52,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
       <div className="create-task-modal" onClick={(e) => e.stopPropagation()}>
         {/* HEADER */}
         <div className="create-task-modal-header">
-          <h3>Créer une tâche</h3>
+          <h4>Créer une tâche</h4>
           <button className="close-btn" onClick={onClose}>
             <X size={16} />
           </button>
@@ -76,19 +77,40 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
 
           <label>
             Assigné à :
-            <select
-              multiple
-              value={assignees}
-              onChange={(e) =>
-                setAssignees(Array.from(e.target.selectedOptions).map((option) => option.value))
-              }
-            >
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
+            <div className="assignee-select">
+              <button
+                type="button"
+                className="assignee-select-trigger"
+                onClick={() => setIsAssigneeOpen((prev) => !prev)}
+              >
+                {assignees.length === 0
+                  ? 'Choisir un ou plusieurs collaborateurs'
+                  : `${assignees.length} collaborateur(s) sélectionné(s)`}
+              </button>
+
+              {isAssigneeOpen && (
+                <div className="assignee-select-dropdown">
+                  {users.map((user) => {
+                    const checked = assignees.includes(user.id);
+
+                    return (
+                      <label key={user.id} className="assignee-option">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            setAssignees((prev) =>
+                              checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
+                            )
+                          }
+                        />
+                        <span>{user.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </label>
 
           {/* STATUS */}
@@ -117,25 +139,24 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
               Terminée
             </button>
           </div>
-        </div>
-
-        {/* FOOTER */}
-        <div className="create-task-modal-footer">
-          <button
-            className="submit-btn"
-            onClick={() => {
-              console.log('TASK (pas encore envoyée) →', {
-                title,
-                description,
-                dueDate,
-                status,
-                assignees,
-              });
-              onClose();
-            }}
-          >
-            + Ajouter une tâche
-          </button>
+          {/* FOOTER */}
+          <div className="create-task-modal-footer">
+            <button
+              className="submit-btn"
+              onClick={() => {
+                console.log('TASK (pas encore envoyée) →', {
+                  title,
+                  description,
+                  dueDate,
+                  status,
+                  assignees,
+                });
+                onClose();
+              }}
+            >
+              + Ajouter une tâche
+            </button>
+          </div>
         </div>
       </div>
     </div>
