@@ -12,6 +12,10 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
     setOpenTaskId((prev) => (prev === taskId ? null : taskId));
   };
 
+  if (tasks.length === 0) {
+    return <p className="no-tasks-found">Aucune tâche trouvée.</p>;
+  }
+
   return (
     <div className="projet-tasks-component">
       {tasks.map((task) => {

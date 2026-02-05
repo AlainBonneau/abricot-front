@@ -1,9 +1,39 @@
+'use client';
+
 import type { Task } from '@/app/types/task';
 import { CalendarDays, SquareCheckBig } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import './TaskComponent.scss';
 import Tasks from './Tasks';
 
+type StatusFilter = 'all' | Task['status'];
+
 export default function TaskComponent({ tasks }: { tasks: Task[] }) {
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [search, setSearch] = useState('');
+
+  // Extraire les statuts uniques pour le filtre
+  const uniqueStatuses = useMemo(() => {
+    return Array.from(new Set(tasks.map((t) => t.status)));
+  }, [tasks]);
+
+  // Filtrer les tâches en fonction du statut et de la recherche
+  const filteredTasks = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    return tasks.filter((task) => {
+      const matchStatus = statusFilter === 'all' ? true : task.status === statusFilter;
+
+      const matchSearch =
+        q.length === 0
+          ? true
+          : (task.title ?? '').toLowerCase().includes(q) ||
+            (task.description ?? '').toLowerCase().includes(q);
+
+      return matchStatus && matchSearch;
+    });
+  }, [tasks, statusFilter, search]);
+
   return (
     <div className="projet-task-component">
       <div className="projet-task-head">
@@ -11,6 +41,7 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
           <h5>Tâches</h5>
           <p>Par ordre de priorité</p>
         </div>
+
         <div className="projet-task-head-right">
           <button className="active">
             <SquareCheckBig className="icon" />
@@ -20,22 +51,35 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
             <CalendarDays className="icon" />
             Calendrier
           </button>
-          {/*  input déroulant qui permet d'afficher les status des tâches */}
-          <select name="status-filter" id="status-filter" className="status-filter">
+
+          {/* Filtre status */}
+          <select
+            id="status-filter"
+            name="status-filter"
+            className="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+          >
             <option value="all">Tous</option>
-            {tasks
-              .map((task) => task.status)
-              .filter((status, index, self) => self.indexOf(status) === index)
-              .map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
+            {uniqueStatuses.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
-          <input type="search" className="task-search" placeholder="Rechercher une tâche" />
+
+          {/* Search */}
+          <input
+            type="search"
+            className="task-search"
+            placeholder="Rechercher une tâche"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       </div>
-      <Tasks tasks={tasks} />
+
+      <Tasks tasks={filteredTasks} />
     </div>
   );
 }
