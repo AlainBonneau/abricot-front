@@ -30,7 +30,6 @@
   color: #6b7280;
 }
 
-// design du bouton
 .list-search {
   display: flex;
   align-items: center;
@@ -39,6 +38,14 @@
   border: 1px solid var(--color-grey);
   border-radius: 8px;
   font-size: 0.875rem;
+}
+
+.no-tasks-message {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  padding: 20px;
 }
 
 @media (max-width: 700px) {
