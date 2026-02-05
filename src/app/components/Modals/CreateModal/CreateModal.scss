@@ -1,0 +1,112 @@
+.create-task-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+/* MODAL */
+.create-task-modal {
+  height: 80%;
+  width: 50%;
+  background: #fff;
+  border-radius: 10px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.create-task-modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-task-modal-body {
+  flex: 1;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.create-task-modal-footer {
+  padding: 24px 32px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* FORM */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.875rem;
+}
+
+/* STATUS */
+.status-container {
+  display: flex;
+  gap: 8px;
+}
+
+.status-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.status-pill.todo {
+  background: #ffe0e0;
+  color: #ef4444;
+}
+
+.status-pill.in-progress {
+  background: #fff0d7;
+  color: #e08d00;
+}
+
+.status-pill.done {
+  background: #f1fff7;
+  color: #27ae60;
+}
+
+.status-pill.active {
+  border-color: #111827;
+}
+
+.submit-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
