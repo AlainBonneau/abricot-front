@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Loader from '../components/Loader/page';
+import Loader from '../components/Loader/Loader';
 import { useAuth } from '../context/AuthContext';
 import ProfileForm from './components/Profileform/ProfileForm';
 import './page.scss';

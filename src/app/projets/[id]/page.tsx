@@ -1,7 +1,7 @@
 'use client';
 
 import { api } from '@/app/api/axiosConfig';
-import Loader from '@/app/components/Loader/page';
+import Loader from '@/app/components/Loader/Loader';
 import CreateTaskModal from '@/app/components/Modals/CreateModal/CreateTaskModal';
 import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectResponse } from '@/app/types/project';

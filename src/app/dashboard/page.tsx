@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Loader from '../components/Loader/page';
+import Loader from '../components/Loader/Loader';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../context/TasksContext';
 import KanbanContainer from './components/KanbanContainer/KanbanContainer';

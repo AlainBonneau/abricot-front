@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import './page.scss';
+import './Navbar.scss';
 
 export default function Navbar() {
   const { user } = useAuth();

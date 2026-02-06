@@ -1,6 +1,6 @@
 'use client';
 
-import Loader from '@/app/components/Loader/page';
+import Loader from '@/app/components/Loader/Loader';
 import { useProjects } from '@/app/context/ProjectsContext';
 import ProjectComponent from './components/ProjectComponent/ProjectComponent';
 import './page.scss';
