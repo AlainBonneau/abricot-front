@@ -3,8 +3,8 @@
 import { api } from '@/app/api/axiosConfig';
 import Loader from '@/app/components/Loader/page';
 import CreateTaskModal from '@/app/components/Modals/CreateModal/CreateTaskModal';
+import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectResponse } from '@/app/types/project';
-import type { TasksOnlyResponse } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,10 +15,9 @@ import './page.scss';
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
 
+  const { projectTasks, fetchProjectTasks, isLoading, error } = useTasks();
+
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
-  const [tasks, setTasks] = useState<TasksOnlyResponse['data']['tasks']>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
@@ -26,24 +25,16 @@ export default function ProjectPage() {
 
     const fetchProject = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
-
-        const [resProject, resTasks] = await Promise.all([
-          api.get<ProjectResponse>(`/projects/${id}`),
-          api.get<TasksOnlyResponse>(`/projects/${id}/tasks`),
-        ]);
+        const resProject = await api.get<ProjectResponse>(`/projects/${id}`);
         setProject(resProject.data.data.project);
-        setTasks(resTasks.data.data.tasks ?? []);
       } catch {
-        setError('Impossible de récupérer le projet');
-      } finally {
-        setIsLoading(false);
+        setProject(null);
       }
     };
 
     fetchProject();
-  }, [id]);
+    fetchProjectTasks(id);
+  }, [id, fetchProjectTasks]);
 
   if (isLoading) return <Loader />;
   if (error) return <p>{error}</p>;
@@ -58,6 +49,7 @@ export default function ProjectPage() {
           </div>
           <p>{project?.description}</p>
         </div>
+
         <div className="projet-page-head-right">
           <button onClick={() => setIsCreateModalOpen(true)}>Créer une tâche</button>
           <button className="create-task-ai-btn">
@@ -66,14 +58,15 @@ export default function ProjectPage() {
           </button>
         </div>
       </section>
+
       <section className="contributor-container">
         <ContributorComponent owner={project?.owner} members={project?.members} />
       </section>
+
       <section className="tasks-container">
-        <TaskComponent tasks={tasks} />
+        <TaskComponent tasks={projectTasks} />
       </section>
 
-      {/* Modal de création de tâche */}
       <CreateTaskModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

@@ -23,6 +23,8 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
   const { createTask, isLoading } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
+
+  // Champs (pas encore envoyés)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -57,7 +59,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
       priority,
       dueDate: dueDateIso,
       assigneeIds: assignees,
-      status,
+      status, // si backend ignore, ok, sinon retire
     });
 
     onClose();
