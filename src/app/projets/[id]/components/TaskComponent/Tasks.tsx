@@ -1,15 +1,21 @@
 import type { Task } from '@/app/types/task';
 import { dateFormatter, getInitials, taskStatusFormatter } from '@/app/utils/function';
-import { CalendarDays, ChevronDown } from 'lucide-react';
+import { CalendarDays, ChevronDown, Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 import './Tasks.scss';
 
 export default function Tasks({ tasks }: { tasks: Task[] }) {
   console.log(tasks);
+
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
 
   const toggleComments = (taskId: string) => {
     setOpenTaskId((prev) => (prev === taskId ? null : taskId));
+  };
+
+  const toggleOptions = (taskId: string) => {
+    setOpenOptionsId((prev) => (prev === taskId ? null : taskId));
   };
 
   if (tasks.length === 0) {
@@ -20,16 +26,34 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
     <div className="projet-tasks-component">
       {tasks.map((task) => {
         const isOpen = openTaskId === task.id;
+        const isOptionsOpen = openOptionsId === task.id;
 
         return (
           <div key={task.id} className="projet-task-item">
             <div className="projet-task-items-head">
-              <div className="item-title">
-                <h5>{task.title}</h5>
-                <span className={`status-pill status-${task.status.toLowerCase()}`}>
-                  {taskStatusFormatter(task.status)}
-                </span>
+              <div className="item-title-container">
+                <div className="item-title">
+                  <h5>{task.title}</h5>
+                  <span className={`status-pill status-${task.status.toLowerCase()}`}>
+                    {taskStatusFormatter(task.status)}
+                  </span>
+                </div>
+
+                {/* Options */}
+                <div className="item-options-wrapper">
+                  <button className="item-options" onClick={() => toggleOptions(task.id)}>
+                    <Ellipsis size={20} />
+                  </button>
+
+                  {isOptionsOpen && (
+                    <div className="item-options-menu">
+                      <button className="item-options-action">Modifier</button>
+                      <button className="item-options-action delete">Supprimer</button>
+                    </div>
+                  )}
+                </div>
               </div>
+
               <p className="item-description">{task.description}</p>
             </div>
 

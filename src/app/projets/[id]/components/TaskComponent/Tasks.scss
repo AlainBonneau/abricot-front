@@ -14,26 +14,104 @@
   height: auto;
 }
 
+/* Header */
 .projet-task-items-head {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.item-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .item-title {
   display: flex;
   align-items: center;
   gap: 12px;
+
+  h5 {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #000000;
+  }
+
+  span {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    padding: 4px 16px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-.item-title h5 {
-  font-weight: 600;
-  font-size: 1.125rem;
-  color: #000000;
+.item-options {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-options-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.item-options-menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  min-width: 140px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-options-action {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #111827;
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background-color: #f3f4f6;
+  }
+
+  &.delete {
+    color: #ef4444;
+
+    &:hover {
+      background-color: #fee2e2;
+    }
+  }
 }
 
 /* Badge status */
-.item-title span,
 .status-pill {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
@@ -59,7 +137,7 @@
   color: #27ae60;
 }
 
-/* description */
+/* Description */
 .item-description {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
@@ -67,7 +145,7 @@
   margin-top: 2px;
 }
 
-/* échéance*/
+/* Échéance */
 .due-date-paragraph {
   margin-top: 18px;
   font-family: 'Inter', sans-serif;
@@ -80,12 +158,12 @@
   span {
     color: var(--color-black);
   }
-}
 
-.due-date-paragraph .calendar-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--color-black);
+  .calendar-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--color-black);
+  }
 }
 
 /* Assignés */
@@ -123,18 +201,17 @@
   background-color: var(--color-grey);
   border-radius: 50px;
   padding: 4px 16px;
-}
 
-.assigned-chip.initials {
-  color: #0f0f0f;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  &.initials {
+    color: #0f0f0f;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* Commentaires */
-
 .comments-toggle {
   margin-top: 18px;
   padding: 15px 14px;
@@ -148,7 +225,6 @@
   border-top: 1px solid #e5e7eb;
   cursor: pointer;
   color: var(--color-black);
-
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
@@ -157,8 +233,10 @@
     transition: transform 0.25s ease;
   }
 
-  &.open svg {
-    transform: rotate(180deg);
+  &.open {
+    svg {
+      transform: rotate(180deg);
+    }
   }
 }
 
@@ -166,7 +244,6 @@
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-
   transition:
     max-height 0.35s ease,
     opacity 0.25s ease;
@@ -241,8 +318,10 @@
     padding: 20px 22px;
   }
 
-  .item-title h5 {
-    font-size: 1rem;
+  .item-title {
+    h5 {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -261,15 +340,15 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
-  }
 
-  .item-title h5 {
-    font-size: 0.95rem;
-  }
+    h5 {
+      font-size: 0.95rem;
+    }
 
-  .item-title span {
-    font-size: 0.75rem;
-    padding: 3px 12px;
+    span {
+      font-size: 0.75rem;
+      padding: 3px 12px;
+    }
   }
 
   .item-description {

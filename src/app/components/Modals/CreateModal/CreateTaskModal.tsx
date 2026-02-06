@@ -20,7 +20,7 @@ type Props = {
 };
 
 export default function CreateModal({ isOpen, onClose, projectId }: Props) {
-  const { createTask, isLoading } = useTasks();
+  const { createTask } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
 
@@ -59,7 +59,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
       priority,
       dueDate: dueDateIso,
       assigneeIds: assignees,
-      status, // si backend ignore, ok, sinon retire
+      status,
     });
 
     onClose();
