@@ -19,6 +19,7 @@ type TasksContextType = {
   fetchAssignedTasks: (userId: string) => Promise<void>;
   fetchProjectTasks: (projectId: string) => Promise<void>;
   createTask: (projectId: string, payload: CreateTaskPayload) => Promise<void>;
+  deleteTask: (projectId: string, taskId: string) => Promise<void>;
 };
 
 const TasksContext = createContext<TasksContextType | null>(null);
@@ -77,6 +78,23 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     [fetchProjectTasks],
   );
 
+  const deleteTask = useCallback(
+    async (projectId: string, taskId: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        await api.delete(`/projects/${projectId}/tasks/${taskId}`);
+        await fetchProjectTasks(projectId);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Erreur suppression tâche');
+        throw e;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchProjectTasks],
+  );
+
   const value = useMemo(
     () => ({
       assignedTasks,
@@ -86,9 +104,18 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       fetchAssignedTasks,
       fetchProjectTasks,
       createTask,
+      deleteTask,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [assignedTasks, projectTasks, isLoading, error],
+    [
+      assignedTasks,
+      projectTasks,
+      isLoading,
+      error,
+      fetchAssignedTasks,
+      fetchProjectTasks,
+      createTask,
+      deleteTask,
+    ],
   );
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

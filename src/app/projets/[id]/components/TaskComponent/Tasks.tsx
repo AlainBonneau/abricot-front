@@ -1,3 +1,4 @@
+import { useTasks } from '@/app/context/TasksContext';
 import type { Task } from '@/app/types/task';
 import { dateFormatter, getInitials, taskStatusFormatter } from '@/app/utils/function';
 import { CalendarDays, ChevronDown, Ellipsis } from 'lucide-react';
@@ -7,6 +8,7 @@ import './Tasks.scss';
 export default function Tasks({ tasks }: { tasks: Task[] }) {
   console.log(tasks);
 
+  const { deleteTask } = useTasks();
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
 
@@ -16,6 +18,12 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
 
   const toggleOptions = (taskId: string) => {
     setOpenOptionsId((prev) => (prev === taskId ? null : taskId));
+  };
+
+  const handleDeleteTask = async (taskId: string, projectId: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+      await deleteTask(projectId, taskId);
+    }
   };
 
   if (tasks.length === 0) {
@@ -48,7 +56,12 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
                   {isOptionsOpen && (
                     <div className="item-options-menu">
                       <button className="item-options-action">Modifier</button>
-                      <button className="item-options-action delete">Supprimer</button>
+                      <button
+                        className="item-options-action delete"
+                        onClick={() => handleDeleteTask(task.id, task.projectId)}
+                      >
+                        Supprimer
+                      </button>
                     </div>
                   )}
                 </div>
