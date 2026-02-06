@@ -58,8 +58,8 @@ export default function ProfileForm({ user }: { user: User }) {
       setEmail(updatedUser.email || '');
 
       setIsCustomizable(false);
-    } catch (err) {
-      console.log(err);
+    } catch {
+      alert('Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer.');
     } finally {
       setIsSaving(false);
     }

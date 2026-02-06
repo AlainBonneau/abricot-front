@@ -6,8 +6,6 @@ import { useState } from 'react';
 import './Tasks.scss';
 
 export default function Tasks({ tasks }: { tasks: Task[] }) {
-  console.log(tasks);
-
   const { deleteTask } = useTasks();
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
