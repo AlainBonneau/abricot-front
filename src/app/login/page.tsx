@@ -51,7 +51,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <button type="submit">Se connecter</button>
+            <button type="submit" aria-label='Se connecter'>Se connecter</button>
             {error && <p className="error-message">{error}</p>}
             <Link href="/forgot-password">Mot de passe oublié ?</Link>
           </form>

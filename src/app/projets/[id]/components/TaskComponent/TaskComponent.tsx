@@ -44,11 +44,11 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
         </div>
 
         <div className="projet-task-head-right">
-          <button className="active">
+          <button className="active" aria-label="Afficher les tâches en vue liste">
             <SquareCheckBig className="icon" />
             Liste
           </button>
-          <button>
+          <button aria-label="Afficher les tâches en vue calendrier">
             <CalendarDays className="icon" />
             Calendrier
           </button>

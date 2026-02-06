@@ -39,7 +39,7 @@ export default function DashboardPage() {
           <h4>Tableau de bord</h4>
           <p>Bonjour {user.name}, voici un aperçu de vos projets et tâches</p>
         </div>
-        <button>+ Créer un projet</button>
+        <button aria-label="Créer un projet">+ Créer un projet</button>
       </section>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -47,6 +47,7 @@ export default function DashboardPage() {
       <section className="list-kanban-container">
         <div className="list-kanban-btn-container">
           <button
+            aria-label="Activer la vue list"
             className={'dashboard-btn ' + (viewMode === 'list' ? 'btn-active' : '')}
             onClick={() => setViewMode('list')}
           >
@@ -54,6 +55,7 @@ export default function DashboardPage() {
             Liste
           </button>
           <button
+            aria-label="Activer la vue kanban"
             className={'dashboard-btn ' + (viewMode === 'kanban' ? 'btn-active' : '')}
             onClick={() => setViewMode('kanban')}
           >

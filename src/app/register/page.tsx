@@ -64,7 +64,7 @@ export default function RegisterPage() {
                 required
               />
             </div>
-            <button type="submit">S&apos;inscrire</button>
+            <button type="submit" aria-label="S'inscrire">S&apos;inscrire</button>
             {error && <p className="error-message">{error}</p>}
           </form>
         </div>

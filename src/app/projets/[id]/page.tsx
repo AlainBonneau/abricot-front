@@ -45,14 +45,16 @@ export default function ProjectPage() {
         <div className="projet-page-head-left">
           <div className="head-left-title">
             <h4>{project?.name}</h4>
-            <button>Modifier</button>
+            <button aria-label="Modifier le nom ou la description du projet">Modifier</button>
           </div>
           <p>{project?.description}</p>
         </div>
 
         <div className="projet-page-head-right">
-          <button onClick={() => setIsCreateModalOpen(true)}>Créer une tâche</button>
-          <button className="create-task-ai-btn">
+          <button onClick={() => setIsCreateModalOpen(true)} aria-label="Créer une tâche">
+            Créer une tâche
+          </button>
+          <button className="create-task-ai-btn" aria-label="Créer une tâche avec l'IA">
             <Image src="/images/star.png" alt="IA" width={21} height={21} />
             IA
           </button>

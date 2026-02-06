@@ -47,16 +47,23 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
 
                 {/* Options */}
                 <div className="item-options-wrapper">
-                  <button className="item-options" onClick={() => toggleOptions(task.id)}>
+                  <button
+                    className="item-options"
+                    onClick={() => toggleOptions(task.id)}
+                    aria-label="Afficher les options de la tâche"
+                  >
                     <Ellipsis size={20} />
                   </button>
 
                   {isOptionsOpen && (
                     <div className="item-options-menu">
-                      <button className="item-options-action">Modifier</button>
+                      <button className="item-options-action" aria-label="Modifier la tâche">
+                        Modifier
+                      </button>
                       <button
                         className="item-options-action delete"
                         onClick={() => handleDeleteTask(task.id, task.projectId)}
+                        aria-label="Supprimer la tâche"
                       >
                         Supprimer
                       </button>
@@ -89,6 +96,7 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
             <button
               className={`comments-toggle ${isOpen ? 'open' : ''}`}
               onClick={() => toggleComments(task.id)}
+              aria-label={`Afficher les commentaires de la tâche ${task.title}`}
             >
               Commentaires ({task.comments.length})
               <ChevronDown size={16} />

@@ -18,7 +18,7 @@ export default function ProjectsPage() {
           <h4>Mes projets</h4>
           <p>Gérez vos projets</p>
         </div>
-        <button>+ Créer un projet</button>
+        <button aria-label="Créer un projet">+ Créer un projet</button>
       </div>
 
       <section className="projets-list">

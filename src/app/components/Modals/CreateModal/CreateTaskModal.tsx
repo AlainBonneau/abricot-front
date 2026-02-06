@@ -67,12 +67,23 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="create-task-modal-overlay" onClick={onClose}>
-      <div className="create-task-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="create-task-modal-overlay" onClick={onClose} role="presentation">
+      <div
+        className="create-task-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-task-title"
+        aria-describedby="create-task-desc"
+      >
         {/* HEADER */}
         <div className="create-task-modal-header">
-          <h4>Créer une tâche</h4>
-          <button className="close-btn" onClick={onClose}>
+          <h4 id="create-task-title">Créer une tâche</h4>
+          <button
+            className="close-btn"
+            onClick={onClose}
+            aria-label="Fermer la fenêtre de création de tâche"
+          >
             <X size={16} />
           </button>
         </div>
@@ -113,6 +124,9 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
               <button
                 type="button"
                 className="assignee-select-trigger"
+                aria-label="Ouvrir le sélecteur de collaborateurs"
+                aria-haspopup="listbox"
+                aria-expanded={isAssigneeOpen}
                 onClick={() => setIsAssigneeOpen((prev) => !prev)}
               >
                 {assignees.length === 0
@@ -121,7 +135,11 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
               </button>
 
               {isAssigneeOpen && (
-                <div className="assignee-select-dropdown">
+                <div
+                  className="assignee-select-dropdown"
+                  role="listbox"
+                  aria-multiselectable="true"
+                >
                   {users.map((user) => {
                     const checked = assignees.includes(user.id);
 
@@ -149,6 +167,9 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
           <div className="status-container">
             <button
               type="button"
+              aria-label='Définir le statut à "À faire"'
+              role="radio"
+              aria-checked={status === 'TODO'}
               className={`status-pill todo ${status === 'TODO' ? 'active' : ''}`}
               onClick={() => setStatus('TODO')}
             >
@@ -157,6 +178,9 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
 
             <button
               type="button"
+              aria-label='Définir le statut à "En cours"'
+              role="radio"
+              aria-checked={status === 'IN_PROGRESS'}
               className={`status-pill in-progress ${status === 'IN_PROGRESS' ? 'active' : ''}`}
               onClick={() => setStatus('IN_PROGRESS')}
             >
@@ -165,6 +189,9 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
 
             <button
               type="button"
+              aria-label='Définir le statut à "Terminée"'
+              role="radio"
+              aria-checked={status === 'DONE'}
               className={`status-pill done ${status === 'DONE' ? 'active' : ''}`}
               onClick={() => setStatus('DONE')}
             >
@@ -173,7 +200,14 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
           </div>
           {/* FOOTER */}
           <div className="create-task-modal-footer">
-            <button className={`submit-btn ${isFormValid ? 'enabled' : ''}`} onClick={handleSubmit}>
+            <button
+              type="button"
+              aria-label="Ajouter la tâche"
+              className={`submit-btn ${isFormValid ? 'enabled' : ''}`}
+              onClick={handleSubmit}
+              disabled={!isFormValid}
+              aria-disabled={!isFormValid}
+            >
               + Ajouter une tâche
             </button>
           </div>

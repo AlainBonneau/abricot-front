@@ -101,11 +101,20 @@ export default function ProfileForm({ user }: { user: User }) {
       </div>
 
       {isCustomizable ? (
-        <button type="submit" disabled={isSaving}>
+        <button
+          type="submit"
+          disabled={isSaving}
+          aria-label="Enregistrer les modifications du profil"
+        >
           {isSaving ? 'Enregistrement…' : 'Enregistrer'}
         </button>
       ) : (
-        <button type="button" onClick={handleIsCustomizable} disabled={isSaving}>
+        <button
+          type="button"
+          onClick={handleIsCustomizable}
+          disabled={isSaving}
+          aria-label="Modifier les informations du profil"
+        >
           Modifier les informations
         </button>
       )}
