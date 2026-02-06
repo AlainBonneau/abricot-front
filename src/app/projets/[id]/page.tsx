@@ -2,6 +2,7 @@
 
 import { api } from '@/app/api/axiosConfig';
 import Loader from '@/app/components/Loader/page';
+import CreateTaskModal from '@/app/components/Modals/CreateModal/CreateTaskModal';
 import type { ProjectResponse } from '@/app/types/project';
 import type { TasksOnlyResponse } from '@/app/types/task';
 import Image from 'next/image';
@@ -18,6 +19,7 @@ export default function ProjectPage() {
   const [tasks, setTasks] = useState<TasksOnlyResponse['data']['tasks']>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -31,9 +33,6 @@ export default function ProjectPage() {
           api.get<ProjectResponse>(`/projects/${id}`),
           api.get<TasksOnlyResponse>(`/projects/${id}/tasks`),
         ]);
-
-        console.log('resTasks', resTasks.data.data.tasks);
-        console.log('resProject', resProject.data.data.project);
         setProject(resProject.data.data.project);
         setTasks(resTasks.data.data.tasks ?? []);
       } catch {
@@ -60,7 +59,7 @@ export default function ProjectPage() {
           <p>{project?.description}</p>
         </div>
         <div className="projet-page-head-right">
-          <button>Créer une tâche</button>
+          <button onClick={() => setIsCreateModalOpen(true)}>Créer une tâche</button>
           <button className="create-task-ai-btn">
             <Image src="/images/star.png" alt="IA" width={21} height={21} />
             IA
@@ -73,6 +72,13 @@ export default function ProjectPage() {
       <section className="tasks-container">
         <TaskComponent tasks={tasks} />
       </section>
+
+      {/* Modal de création de tâche */}
+      <CreateTaskModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        projectId={id}
+      />
     </div>
   );
 }

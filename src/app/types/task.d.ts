@@ -63,3 +63,21 @@ export type TasksOnlyResponse = ApiResponse<{
 export type AssignedTasksResponse = ApiResponse<{
   tasks: Task[];
 }>;
+
+// POST /projects/:id/tasks
+export type CreateTaskPayload = {
+  title: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  dueDate: string;
+  assigneeIds: string[];
+  status: TaskStatus;
+};
+
+export type TasksContextType = {
+  assignedTasks: Task[];
+  isLoading: boolean;
+  error: string | null;
+  fetchAssignedTasks: (userId: string) => Promise<void>;
+  createTask: (projectId: string, payload: CreateTaskPayload) => Promise<void>;
+};

@@ -1,9 +1,10 @@
 'use client';
 
 import { api } from '@/app/api/axiosConfig';
+import { useTasks } from '@/app/context/TasksContext';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import './CreateModal.scss';
+import './CreateTaskModal.scss';
 
 type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
@@ -19,13 +20,13 @@ type Props = {
 };
 
 export default function CreateModal({ isOpen, onClose, projectId }: Props) {
+  const { createTask, isLoading } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
-
-  // Champs (pas encore envoyés)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [priority, setPriority] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM');
   const [assignees, setAssignees] = useState<string[]>([]);
   const [isAssigneeOpen, setIsAssigneeOpen] = useState<boolean>(false);
 
@@ -44,6 +45,23 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
 
     fetchUsers();
   }, [isOpen, projectId]);
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !description.trim() || !dueDate) return;
+
+    const dueDateIso = new Date(`${dueDate}T12:00:00.000Z`).toISOString();
+
+    await createTask(projectId, {
+      title: title.trim(),
+      description: description.trim(),
+      priority,
+      dueDate: dueDateIso,
+      assigneeIds: assignees,
+      status,
+    });
+
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -68,6 +86,19 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
           <label>
             Description*
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          </label>
+
+          {/* Priorité */}
+          <label>
+            Priorité*
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as 'LOW' | 'MEDIUM' | 'HIGH')}
+            >
+              <option value="LOW">Basse</option>
+              <option value="MEDIUM">Moyenne</option>
+              <option value="HIGH">Haute</option>
+            </select>
           </label>
 
           <label>
@@ -141,19 +172,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
           </div>
           {/* FOOTER */}
           <div className="create-task-modal-footer">
-            <button
-              className="submit-btn"
-              onClick={() => {
-                console.log('TASK (pas encore envoyée) →', {
-                  title,
-                  description,
-                  dueDate,
-                  status,
-                  assignees,
-                });
-                onClose();
-              }}
-            >
+            <button className="submit-btn" onClick={handleSubmit}>
               + Ajouter une tâche
             </button>
           </div>
