@@ -23,14 +23,13 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
   const { createTask } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
-
-  // Champs (pas encore envoyés)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM');
   const [assignees, setAssignees] = useState<string[]>([]);
   const [isAssigneeOpen, setIsAssigneeOpen] = useState<boolean>(false);
+  const isFormValid = title.trim() !== '' && description.trim() !== '' && dueDate !== '';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -174,7 +173,7 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
           </div>
           {/* FOOTER */}
           <div className="create-task-modal-footer">
-            <button className="submit-btn" onClick={handleSubmit}>
+            <button className={`submit-btn ${isFormValid ? 'enabled' : ''}`} onClick={handleSubmit}>
               + Ajouter une tâche
             </button>
           </div>

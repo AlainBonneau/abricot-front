@@ -48,7 +48,7 @@
 }
 
 .close-btn {
-  background: none;
+  background-color: transparent;
   border: none;
   cursor: pointer;
 }
@@ -131,23 +131,23 @@ textarea, select {
   border-radius: 999px;
   font-size: 0.75rem;
   border: 1px solid transparent;
-  background: #f3f4f6;
+  background-color: #f3f4f6;
   cursor: pointer;
   transition: 0.2s;
 }
 
 .status-pill.todo {
-  background: #ffe0e0;
+  background-color: #ffe0e0;
   color: #ef4444;
 }
 
 .status-pill.in-progress {
-  background: #fff0d7;
+  background-color: #fff0d7;
   color: #e08d00;
 }
 
 .status-pill.done {
-  background: #f1fff7;
+  background-color: #f1fff7;
   color: #27ae60;
 }
 
@@ -159,9 +159,19 @@ textarea, select {
   padding: 12px 20px;
   border-radius: 8px;
   border: none;
-  background: #e5e7eb;
+  background-color: #e5e7eb;
+  transition: 0.2s;
   color: #6b7280;
   cursor: not-allowed;
+}
+
+.submit-btn.enabled {
+  background-color: var(--color-black);
+  color: #ffffff;
+  cursor: pointer;
+  &:hover {
+    background-color: #000000;
+  }
 }
 
 /* ===== Tablet ===== */
