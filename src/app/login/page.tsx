@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError('');
     try {
       await login(email, password);
-    } catch (err) {
+    } catch {
       setError('Email ou mot de passe invalide.');
     }
   };
@@ -51,7 +51,9 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <button type="submit" aria-label='Se connecter'>Se connecter</button>
+            <button type="submit" aria-label="Se connecter">
+              Se connecter
+            </button>
             {error && <p className="error-message">{error}</p>}
             <Link href="/forgot-password">Mot de passe oublié ?</Link>
           </form>
