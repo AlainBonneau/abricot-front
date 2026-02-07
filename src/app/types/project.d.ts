@@ -41,3 +41,9 @@ export type ProjectsResponse = ApiResponse<{
 export type ProjectResponse = ApiResponse<{
   project: Project;
 }>;
+
+export type UpdateProjectPayload = {
+  name: string;
+  description: string;
+  contributorIds?: string[];
+};

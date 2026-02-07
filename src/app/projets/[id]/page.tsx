@@ -3,6 +3,7 @@
 import { api } from '@/app/api/axiosConfig';
 import Loader from '@/app/components/Loader/Loader';
 import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
+import EditProjectModal from '@/app/components/Modals/EditProjectModal/EditProjectModal';
 import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
 import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectResponse } from '@/app/types/project';
@@ -22,6 +23,7 @@ export default function ProjectPage() {
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const openEditModal = (task: Task) => {
@@ -45,6 +47,10 @@ export default function ProjectPage() {
     fetchProjectTasks(id);
   }, [id, fetchProjectTasks]);
 
+  const handleProjectUpdated = (next: { name: string; description: string }) => {
+    setProject((prev) => (prev ? { ...prev, ...next } : prev));
+  };
+
   if (isLoading) return <Loader />;
   if (error) return <p>{error}</p>;
 
@@ -54,7 +60,12 @@ export default function ProjectPage() {
         <div className="projet-page-head-left">
           <div className="head-left-title">
             <h4>{project?.name}</h4>
-            <button aria-label="Modifier le nom ou la description du projet">Modifier</button>
+            <button
+              aria-label="Modifier le nom ou la description du projet"
+              onClick={() => setIsEditProjectModalOpen(true)}
+            >
+              Modifier
+            </button>
           </div>
           <p>{project?.description}</p>
         </div>
@@ -90,6 +101,15 @@ export default function ProjectPage() {
         onClose={() => setIsEditModalOpen(false)}
         projectId={id}
         task={selectedTask}
+      />
+
+      <EditProjectModal
+        key={project?.id ?? 'no-project'}
+        isOpen={isEditProjectModalOpen}
+        onClose={() => setIsEditProjectModalOpen(false)}
+        projectId={id}
+        project={project}
+        onUpdated={handleProjectUpdated}
       />
     </div>
   );
