@@ -11,11 +11,13 @@ export type User = {
 
 export type ProjectMemberRole = 'OWNER' | 'ADMIN' | 'MEMBER';
 
-export type ProjectMember = {
+type ProjectMember = {
   id: string;
-  role: ProjectMemberRole;
-  user: User;
-  joinedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email?: string;
+  };
 };
 
 export type Project = {

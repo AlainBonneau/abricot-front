@@ -6,7 +6,7 @@ import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskM
 import EditProjectModal from '@/app/components/Modals/EditProjectModal/EditProjectModal';
 import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
 import { useTasks } from '@/app/context/TasksContext';
-import type { ProjectResponse } from '@/app/types/project';
+import type { ProjectResponse, ProjectMember } from '@/app/types/project';
 import { Task } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -47,7 +47,11 @@ export default function ProjectPage() {
     fetchProjectTasks(id);
   }, [id, fetchProjectTasks]);
 
-  const handleProjectUpdated = (next: { name: string; description: string }) => {
+  const handleProjectUpdated = (next: {
+    name: string;
+    description: string;
+    members: ProjectMember[];
+  }) => {
     setProject((prev) => (prev ? { ...prev, ...next } : prev));
   };
 

@@ -2,6 +2,7 @@
 
 import { api } from '@/app/api/axiosConfig';
 import { useProjects } from '@/app/context/ProjectsContext';
+import type { ProjectMember } from '@/app/types/project';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import './EditProjectModal.scss';
@@ -9,6 +10,7 @@ import './EditProjectModal.scss';
 type User = {
   id: string;
   name: string;
+  email: string;
 };
 
 type Props = {
@@ -16,7 +18,7 @@ type Props = {
   onClose: () => void;
   projectId: string;
   project: { name: string; description: string } | null;
-  onUpdated: (next: { name: string; description: string }) => void;
+  onUpdated: (next: { name: string; description: string; members: ProjectMember[] }) => void;
 };
 
 export default function EditProjectModal({
@@ -26,41 +28,96 @@ export default function EditProjectModal({
   project,
   onUpdated,
 }: Props) {
-  const { updateProject } = useProjects();
+  const { updateProject, addContributor, removeContributor } = useProjects();
+
   const [title, setTitle] = useState(project?.name ?? '');
   const [description, setDescription] = useState(project?.description ?? '');
   const [users, setUsers] = useState<User[]>([]);
   const [selectedContributorIds, setSelectedContributorIds] = useState<string[]>([]);
-  const [isContributorOpen, setIsContributorOpen] = useState(false);
+  const [initialContributorIds, setInitialContributorIds] = useState<string[]>([]);
 
+  const [isContributorOpen, setIsContributorOpen] = useState(false);
   const isFormValid = title.trim() !== '' && description.trim() !== '';
 
   useEffect(() => {
     if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTitle(project?.name ?? '');
+    setDescription(project?.description ?? '');
+  }, [isOpen, project]);
 
-    const fetchUsers = async () => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchAllContributors = async () => {
       try {
-        const res = await api.get(`/projects/${projectId}/contributors`);
+        const res = await api.get('/contributors');
         setUsers(res.data.data.contributors ?? []);
       } catch (error) {
-        console.error('Erreur chargement contributeurs', error);
+        console.error('Erreur chargement /contributors', error);
+        setUsers([]);
       }
     };
 
-    fetchUsers();
+    const fetchProjectContributors = async () => {
+      try {
+        const res = await api.get(`/projects/${projectId}/contributors`);
+        const current: User[] = res.data.data.contributors ?? [];
+        const ids = current.map((c) => c.id);
+
+        setSelectedContributorIds(ids);
+        setInitialContributorIds(ids);
+      } catch (error) {
+        console.error('Erreur chargement contributeurs projet', error);
+        setSelectedContributorIds([]);
+        setInitialContributorIds([]);
+      }
+    };
+
+    fetchAllContributors();
+    fetchProjectContributors();
   }, [isOpen, projectId]);
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
+    const nextName = title.trim();
+    const nextDescription = description.trim();
+
     try {
-      await updateProject(projectId, {
-        name: title.trim(),
-        description: description.trim(),
-        contributorIds: selectedContributorIds,
+      await updateProject(projectId, { name: nextName, description: nextDescription });
+
+      const toAdd = selectedContributorIds.filter((id) => !initialContributorIds.includes(id));
+      const toRemove = initialContributorIds.filter((id) => !selectedContributorIds.includes(id));
+
+      const idToEmail = new Map(users.map((u) => [u.id, u.email]));
+
+      const toAddEmails = toAdd
+        .map((id) => idToEmail.get(id))
+        .filter((email): email is string => typeof email === 'string' && email.length > 0);
+
+      await Promise.all([
+        ...toAddEmails.map((email) => addContributor(projectId, email)),
+        ...toRemove.map((userId) => removeContributor(projectId, userId)),
+      ]);
+
+      const nextMembers: ProjectMember[] = users
+        .filter((u) => selectedContributorIds.includes(u.id))
+        .map((u) => ({
+          id: u.id,
+          user: {
+            id: u.id,
+            name: u.name,
+            email: u.email,
+          },
+        }));
+
+      onUpdated({
+        name: nextName,
+        description: nextDescription,
+        members: nextMembers,
       });
 
-      onUpdated({ name: title.trim(), description: description.trim() });
       onClose();
     } catch (e) {
       console.error(e);
@@ -112,7 +169,7 @@ export default function EditProjectModal({
           </label>
 
           <label>
-            Contributeur :
+            Contributeurs :
             <div className="contributor-select">
               <button
                 type="button"
