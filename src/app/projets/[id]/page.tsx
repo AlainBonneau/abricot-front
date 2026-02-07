@@ -2,9 +2,11 @@
 
 import { api } from '@/app/api/axiosConfig';
 import Loader from '@/app/components/Loader/Loader';
-import CreateTaskModal from '@/app/components/Modals/CreateModal/CreateTaskModal';
+import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
+import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
 import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectResponse } from '@/app/types/project';
+import { Task } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,6 +21,13 @@ export default function ProjectPage() {
 
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const openEditModal = (task: Task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -66,13 +75,21 @@ export default function ProjectPage() {
       </section>
 
       <section className="tasks-container">
-        <TaskComponent tasks={projectTasks} />
+        <TaskComponent tasks={projectTasks} openEditModal={openEditModal} />
       </section>
 
       <CreateTaskModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         projectId={id}
+      />
+
+      <EditTaskModal
+        key={selectedTask?.id ?? 'no-task'}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        projectId={id}
+        task={selectedTask}
       />
     </div>
   );

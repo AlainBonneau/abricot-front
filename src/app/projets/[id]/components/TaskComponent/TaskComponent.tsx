@@ -9,7 +9,13 @@ import Tasks from './Tasks';
 
 type StatusFilter = 'all' | Task['status'];
 
-export default function TaskComponent({ tasks }: { tasks: Task[] }) {
+export default function TaskComponent({
+  tasks,
+  openEditModal,
+}: {
+  tasks: Task[];
+  openEditModal: (task: Task) => void;
+}) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
 
@@ -80,7 +86,7 @@ export default function TaskComponent({ tasks }: { tasks: Task[] }) {
         </div>
       </div>
 
-      <Tasks tasks={filteredTasks} />
+      <Tasks tasks={filteredTasks} openEditModal={openEditModal} />
     </div>
   );
 }

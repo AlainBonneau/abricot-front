@@ -19,8 +19,11 @@ type TasksContextType = {
   fetchAssignedTasks: (userId: string) => Promise<void>;
   fetchProjectTasks: (projectId: string) => Promise<void>;
   createTask: (projectId: string, payload: CreateTaskPayload) => Promise<void>;
+  updateTask: (projectId: string, taskId: string, payload: UpdateTaskPayload) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
 };
+
+type UpdateTaskPayload = CreateTaskPayload;
 
 const TasksContext = createContext<TasksContextType | null>(null);
 
@@ -30,6 +33,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Charger les tâches assignées à un utilisateur
   const fetchAssignedTasks = useCallback(async (userId: string) => {
     setIsLoading(true);
     setError(null);
@@ -46,6 +50,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Charger les tâches d'un projet
   const fetchProjectTasks = useCallback(async (projectId: string) => {
     setIsLoading(true);
     setError(null);
@@ -60,6 +65,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Créer une tâche
   const createTask = useCallback(
     async (projectId: string, payload: CreateTaskPayload) => {
       setIsLoading(true);
@@ -78,6 +84,26 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     [fetchProjectTasks],
   );
 
+  // Modifier une tâche
+  const updateTask = useCallback(
+    async (projectId: string, taskId: string, payload: UpdateTaskPayload) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await api.put(`/projects/${projectId}/tasks/${taskId}`, payload);
+        await fetchProjectTasks(projectId);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Erreur modification tâche');
+        throw e;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchProjectTasks],
+  );
+
+  // Supprimer une tâche
   const deleteTask = useCallback(
     async (projectId: string, taskId: string) => {
       setIsLoading(true);
@@ -104,6 +130,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       fetchAssignedTasks,
       fetchProjectTasks,
       createTask,
+      updateTask,
       deleteTask,
     }),
     [
@@ -114,6 +141,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       fetchAssignedTasks,
       fetchProjectTasks,
       createTask,
+      updateTask,
       deleteTask,
     ],
   );

@@ -5,7 +5,13 @@ import { CalendarDays, ChevronDown, Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 import './Tasks.scss';
 
-export default function Tasks({ tasks }: { tasks: Task[] }) {
+export default function Tasks({
+  tasks,
+  openEditModal,
+}: {
+  tasks: Task[];
+  openEditModal: (task: Task) => void;
+}) {
   const { deleteTask } = useTasks();
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
@@ -57,7 +63,11 @@ export default function Tasks({ tasks }: { tasks: Task[] }) {
 
                   {isOptionsOpen && (
                     <div className="item-options-menu">
-                      <button className="item-options-action" aria-label="Modifier la tâche">
+                      <button
+                        className="item-options-action"
+                        aria-label="Modifier la tâche"
+                        onClick={() => openEditModal(task)}
+                      >
                         Modifier
                       </button>
                       <button
