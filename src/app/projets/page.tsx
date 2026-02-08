@@ -2,11 +2,14 @@
 
 import Loader from '@/app/components/Loader/Loader';
 import { useProjects } from '@/app/context/ProjectsContext';
+import { useState } from 'react';
+import CreateProjectModal from '../components/Modals/CreateProjectModal/CreateProjectModal';
 import ProjectComponent from './components/ProjectComponent/ProjectComponent';
 import './page.scss';
 
 export default function ProjectsPage() {
   const { projects, isLoading, error } = useProjects();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   if (isLoading) return <Loader />;
   if (error) return <p>{error}</p>;
@@ -18,7 +21,9 @@ export default function ProjectsPage() {
           <h4>Mes projets</h4>
           <p>Gérez vos projets</p>
         </div>
-        <button aria-label="Créer un projet">+ Créer un projet</button>
+        <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
+          + Créer un projet
+        </button>
       </div>
 
       <section className="projets-list">
@@ -28,6 +33,7 @@ export default function ProjectsPage() {
           projects.map((project) => <ProjectComponent key={project.id} project={project} />)
         )}
       </section>
+      <CreateProjectModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }
