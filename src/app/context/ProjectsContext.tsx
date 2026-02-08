@@ -2,6 +2,7 @@
 
 import { api } from '@/app/api/axiosConfig';
 import type { CreateProjectPayload, Project, UpdateProjectPayload } from '@/app/types/project';
+import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type ProjectsContextType = {
@@ -10,6 +11,7 @@ type ProjectsContextType = {
   error: string | null;
   refreshProjects: () => Promise<void>;
   createProject: (payload: CreateProjectPayload) => Promise<Project>;
+  deleteProject: (projectId: string) => Promise<void>;
   updateProject: (projectId: string, payload: UpdateProjectPayload) => Promise<void>;
   addContributor: (projectId: string, email: string) => Promise<void>;
   removeContributor: (projectId: string, userId: string) => Promise<void>;
@@ -18,6 +20,7 @@ type ProjectsContextType = {
 const ProjectsContext = createContext<ProjectsContextType | null>(null);
 
 export function ProjectsProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +85,27 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Suppression de projet
+  const deleteProject = async (projectId: string) => {
+    try {
+      setIsLoading(true);
+      if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+        setIsLoading(false);
+        return;
+      }
+      setError(null);
+      await api.delete(`/projects/${projectId}`);
+      router.push('/projets');
+      await fetchProjects();
+    } catch (err) {
+      setError('Erreur lors de la suppression du projet');
+      console.error(err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Ajout d'un contributeur
   const addContributor = async (projectId: string, email: string) => {
     try {
@@ -127,6 +151,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
         addContributor,
         removeContributor,
         createProject,
+        deleteProject,
       }}
     >
       {children}

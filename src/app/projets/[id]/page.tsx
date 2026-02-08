@@ -5,8 +5,9 @@ import Loader from '@/app/components/Loader/Loader';
 import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
 import EditProjectModal from '@/app/components/Modals/EditProjectModal/EditProjectModal';
 import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
+import { useProjects } from '@/app/context/ProjectsContext';
 import { useTasks } from '@/app/context/TasksContext';
-import type { ProjectResponse, ProjectMember } from '@/app/types/project';
+import type { ProjectMember, ProjectResponse } from '@/app/types/project';
 import { Task } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -19,6 +20,7 @@ export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
 
   const { projectTasks, fetchProjectTasks, isLoading, error } = useTasks();
+  const { deleteProject } = useProjects();
 
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -70,6 +72,7 @@ export default function ProjectPage() {
             >
               Modifier
             </button>
+            <button onClick={() => deleteProject(id)}>Supprimer</button>
           </div>
           <p>{project?.description}</p>
         </div>
