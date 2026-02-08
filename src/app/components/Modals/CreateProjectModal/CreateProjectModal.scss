@@ -85,6 +85,11 @@ select {
   color: #6b7280;
   font-size: 0.75rem;
   cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 }
 
 .contributor-select-dropdown {
@@ -121,6 +126,19 @@ select {
   }
 }
 
+.contributors-error {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #ef4444;
+}
+
+.contributors-empty {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Button */
 .submit-btn {
   padding: 12px 20px;
   border-radius: 8px;
@@ -141,7 +159,6 @@ select {
   }
 }
 
-/* A11y helper */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -154,7 +171,7 @@ select {
   border: 0;
 }
 
-/* ===== Tablet ===== */
+/* Tablet */
 @media (max-width: 1000px) {
   .create-project-modal {
     width: 80%;
@@ -172,7 +189,7 @@ select {
   }
 }
 
-/* ===== Mobile ===== */
+/* Mobile */
 @media (max-width: 600px) {
   .create-project-modal {
     width: 92%;

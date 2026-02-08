@@ -1,12 +1,15 @@
 'use client';
 
+import { api } from '@/app/api/axiosConfig';
+import { useProjects } from '@/app/context/ProjectsContext';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './CreateProjectModal.scss';
 
 type User = {
   id: string;
   name: string;
+  email: string;
 };
 
 type Props = {
@@ -15,27 +18,65 @@ type Props = {
 };
 
 export default function CreateProjectModal({ isOpen, onClose }: Props) {
-  // 🧪 Static data (à remplacer plus tard par l'API / provider)
-  const fakeUsers: User[] = [
-    { id: '1', name: 'Alice' },
-    { id: '2', name: 'Bob' },
-    { id: '3', name: 'Charlie' },
-  ];
+  const { createProject } = useProjects();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedContributorIds, setSelectedContributorIds] = useState<string[]>([]);
   const [isContributorOpen, setIsContributorOpen] = useState(false);
+  const [isLoadingContributors, setIsLoadingContributors] = useState(false);
+  const [contributorsError, setContributorsError] = useState<string | null>(null);
 
   const isFormValid = title.trim() !== '' && description.trim() !== '';
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setTitle('');
+    setDescription('');
+    setSelectedContributorIds([]);
+    setIsContributorOpen(false);
+    setContributorsError(null);
+  }, [isOpen]);
+
+  // Charger tous les contributeurs disponibles (GET /contributors)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchAllContributors = async () => {
+      try {
+        setIsLoadingContributors(true);
+        setContributorsError(null);
+
+        const res = await api.get('/contributors');
+        setUsers(res.data.data.contributors ?? []);
+      } catch (e) {
+        console.error('Erreur chargement /contributors', e);
+        setUsers([]);
+        setContributorsError('Impossible de charger la liste des contributeurs.');
+      } finally {
+        setIsLoadingContributors(false);
+      }
+    };
+
+    fetchAllContributors();
+  }, [isOpen]);
+
+  const selectedUsers = useMemo(
+    () => users.filter((u) => selectedContributorIds.includes(u.id)),
+    [users, selectedContributorIds],
+  );
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
-    // ✅ Static : pas d'appel backend pour le moment
-    // Tu pourras remplacer ça plus tard par createProject(...)
-    // payload: { name: title.trim(), description: description.trim(), contributorIds: selectedContributorIds }
+    const payload = {
+      name: title.trim(),
+      description: description.trim(),
+      contributors: selectedUsers.map((u) => u.email),
+    };
 
+    await createProject(payload);
     onClose();
   };
 
@@ -98,36 +139,45 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
                 aria-haspopup="listbox"
                 aria-expanded={isContributorOpen}
                 onClick={() => setIsContributorOpen((prev) => !prev)}
+                disabled={isLoadingContributors}
               >
-                {selectedContributorIds.length === 0
-                  ? 'Choisir un ou plusieurs contributeurs'
-                  : `${selectedContributorIds.length} contributeur(s) sélectionné(s)`}
+                {isLoadingContributors
+                  ? 'Chargement...'
+                  : selectedContributorIds.length === 0
+                    ? 'Choisir un ou plusieurs contributeurs'
+                    : `${selectedContributorIds.length} contributeur(s) sélectionné(s)`}
               </button>
 
-              {isContributorOpen && (
+              {contributorsError && <p className="contributors-error">{contributorsError}</p>}
+
+              {isContributorOpen && !isLoadingContributors && (
                 <div
                   className="contributor-select-dropdown"
                   role="listbox"
                   aria-multiselectable="true"
                 >
-                  {fakeUsers.map((user) => {
-                    const checked = selectedContributorIds.includes(user.id);
+                  {users.length === 0 ? (
+                    <p className="contributors-empty">Aucun contributeur disponible.</p>
+                  ) : (
+                    users.map((user) => {
+                      const checked = selectedContributorIds.includes(user.id);
 
-                    return (
-                      <label key={user.id} className="contributor-option">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            setSelectedContributorIds((prev) =>
-                              checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
-                            )
-                          }
-                        />
-                        <span>{user.name}</span>
-                      </label>
-                    );
-                  })}
+                      return (
+                        <label key={user.id} className="contributor-option">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() =>
+                              setSelectedContributorIds((prev) =>
+                                checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
+                              )
+                            }
+                          />
+                          <span>{user.name}</span>
+                        </label>
+                      );
+                    })
+                  )}
                 </div>
               )}
             </div>

@@ -49,3 +49,9 @@ export type UpdateProjectPayload = {
   description: string;
   contributorIds?: string[];
 };
+
+export type CreateProjectPayload = {
+  name: string;
+  description: string;
+  contributors: string[];
+};

@@ -1,7 +1,7 @@
 'use client';
 
 import { api } from '@/app/api/axiosConfig';
-import type { Project, UpdateProjectPayload } from '@/app/types/project';
+import type { CreateProjectPayload, Project, UpdateProjectPayload } from '@/app/types/project';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type ProjectsContextType = {
@@ -9,6 +9,7 @@ type ProjectsContextType = {
   isLoading: boolean;
   error: string | null;
   refreshProjects: () => Promise<void>;
+  createProject: (payload: CreateProjectPayload) => Promise<Project>;
   updateProject: (projectId: string, payload: UpdateProjectPayload) => Promise<void>;
   addContributor: (projectId: string, email: string) => Promise<void>;
   removeContributor: (projectId: string, userId: string) => Promise<void>;
@@ -38,6 +39,32 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // création de projet
+  const createProject = async (payload: CreateProjectPayload) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const res = await api.post('/projects', payload);
+      const created: Project | null = res.data?.data?.project ?? null;
+
+      if (created) {
+        setProjects((prev) => [created, ...prev]);
+        return created;
+      }
+
+      await fetchProjects();
+      return res.data?.data?.project ?? ({} as Project);
+    } catch (err) {
+      setError('Erreur lors de la création du projet');
+      console.error(err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // mise à jour de projet
   const updateProject = async (projectId: string, payload: UpdateProjectPayload) => {
     try {
       setIsLoading(true);
@@ -55,6 +82,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Ajout d'un contributeur
   const addContributor = async (projectId: string, email: string) => {
     try {
       setIsLoading(true);
@@ -69,6 +97,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Suppression d'un contributeur
   const removeContributor = async (projectId: string, userId: string) => {
     try {
       setIsLoading(true);
@@ -97,6 +126,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
         updateProject,
         addContributor,
         removeContributor,
+        createProject,
       }}
     >
       {children}
