@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '../components/Loader/Loader';
+import CreateProjectModal from '../components/Modals/CreateProjectModal/CreateProjectModal';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../context/TasksContext';
 import KanbanContainer from './components/KanbanContainer/KanbanContainer';
@@ -14,6 +15,7 @@ export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { assignedTasks, fetchAssignedTasks, isLoading: tasksLoading, error } = useTasks();
 
@@ -39,7 +41,9 @@ export default function DashboardPage() {
           <h4>Tableau de bord</h4>
           <p>Bonjour {user.name}, voici un aperçu de vos projets et tâches</p>
         </div>
-        <button aria-label="Créer un projet">+ Créer un projet</button>
+        <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
+          + Créer un projet
+        </button>
       </section>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -75,6 +79,7 @@ export default function DashboardPage() {
           <KanbanContainer tasks={assignedTasks} />
         )}
       </section>
+      <CreateProjectModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }

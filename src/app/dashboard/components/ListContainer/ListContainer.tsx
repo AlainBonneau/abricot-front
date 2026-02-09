@@ -34,6 +34,7 @@ export default function ListContainer({ assignedTasks }: ListContainerProps) {
         <input
           className="list-search"
           type="text"
+          aria-label="Rechercher une tâche"
           placeholder="Rechercher une tâche..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
