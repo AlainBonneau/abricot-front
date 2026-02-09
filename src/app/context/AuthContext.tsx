@@ -14,6 +14,7 @@ type AuthContextType = {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth();
   }, []);
 
+  // Connexion
   const login = async (email: string, password: string) => {
     const { token, user } = await loginService(email, password);
 
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/profil');
   };
 
+  // Inscription
   const register = async (name: string, email: string, password: string) => {
     const { token, user } = await registerService(name, email, password);
 
@@ -77,6 +80,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/login');
   };
 
+  // Changer le mot de passe
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      await api.put('/auth/password', { currentPassword, newPassword });
+      logout();
+    } catch {
+      throw new Error('Failed to change password');
+    }
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -86,6 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       register,
       logout,
       setUser,
+      changePassword,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, isLoading],
