@@ -89,10 +89,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const deleteProject = async (projectId: string) => {
     try {
       setIsLoading(true);
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
-        setIsLoading(false);
-        return;
-      }
       setError(null);
       await api.delete(`/projects/${projectId}`);
       router.push('/projets');

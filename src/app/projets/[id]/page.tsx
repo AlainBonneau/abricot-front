@@ -76,17 +76,25 @@ export default function ProjectPage() {
             <button
               onClick={async () => {
                 try {
-                  await deleteProject(id);
-                  toast.success('Projet supprimé avec succès');
+                  if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+                    await deleteProject(id);
+                    toast.success('Projet supprimé avec succès');
+                  }
                 } catch (err) {
                   console.log('Erreur récupérée dans la page:', err);
 
-                  const message =
-                    err instanceof Error
-                      ? (err.response?.data?.message ?? err.message)
-                      : 'Erreur lors de la suppression du projet';
+                  let message = 'Erreur lors de la suppression du projet';
 
-                  toast.error(message ?? 'Erreur lors de la suppression du projet');
+                  if (err instanceof Error) {
+                    message = err.message;
+                  }
+
+                  if (typeof err === 'object' && err !== null && 'response' in err) {
+                    const axiosErr = err as { response?: { data?: { message?: string } } };
+                    message = axiosErr.response?.data?.message ?? message;
+                  }
+
+                  toast.error(message);
                 }
               }}
             >
