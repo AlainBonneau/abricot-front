@@ -4,6 +4,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { updateUserProfile } from '@/app/services/user.service';
 import type { User } from '@/app/types/user';
 import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import './ProfileForm.scss';
 
 const splitName = (fullName?: string) => {
@@ -58,8 +59,9 @@ export default function ProfileForm({ user }: { user: User }) {
       setEmail(updatedUser.email || '');
 
       setIsCustomizable(false);
+      toast.success('Profil mis à jour avec succès !');
     } catch {
-      alert('Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer.');
+      toast.error('Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer.');
     } finally {
       setIsSaving(false);
     }

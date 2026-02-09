@@ -4,6 +4,7 @@ import { api } from '@/app/api/axiosConfig';
 import { useProjects } from '@/app/context/ProjectsContext';
 import { X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import './CreateProjectModal.scss';
 
 type User = {
@@ -138,6 +139,7 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
     };
 
     await createProject(payload);
+    toast.success('Projet créé avec succès !');
     onClose();
   };
 
