@@ -19,7 +19,7 @@ type Props = {
   projectId: string;
 };
 
-export default function CreateModal({ isOpen, onClose, projectId }: Props) {
+export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
   const { createTask } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
@@ -63,6 +63,15 @@ export default function CreateModal({ isOpen, onClose, projectId }: Props) {
 
     onClose();
   };
+
+  // Ferme la modal si l'utilisateur appuie sur Échap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, isOpen]);
 
   if (!isOpen) return null;
 

@@ -125,6 +125,15 @@ export default function EditProjectModal({
     }
   };
 
+  // Ferme la modal si l'utilisateur appuie sur Échap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, isOpen]);
+
   if (!isOpen) return null;
 
   return (

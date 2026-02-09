@@ -39,7 +39,7 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
     setContributorsError(null);
   }, [isOpen]);
 
-  // Charger tous les contributeurs disponibles (GET /contributors)
+  // Charger tous les contributeurs disponibles
   useEffect(() => {
     if (!isOpen) return;
 
@@ -79,6 +79,18 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
     await createProject(payload);
     onClose();
   };
+
+  // Ferme la modal lorsque l'utilisateur appuie sur echap
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 

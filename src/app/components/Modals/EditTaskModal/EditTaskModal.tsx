@@ -82,6 +82,15 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
     }
   };
 
+  // Ferme la modal si l'utilisateur appuie sur Échap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, isOpen]);
+
   if (!isOpen || !task) return null;
 
   return (
