@@ -129,6 +129,14 @@ export default function Tasks({
                   </div>
                 ))
               )}
+              <form className="add-comment-form">
+                <input
+                  type="text"
+                  
+                  placeholder="Écrivez votre message ici"
+                />
+                <button>Envoyer</button>
+              </form>
             </div>
           </div>
         );
