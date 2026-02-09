@@ -13,7 +13,7 @@ export default function Tasks({
   tasks: Task[];
   openEditModal: (task: Task) => void;
 }) {
-  const { deleteTask } = useTasks();
+  const { addComment, deleteTask } = useTasks();
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
 
@@ -30,6 +30,21 @@ export default function Tasks({
       await deleteTask(projectId, taskId);
       toast.success('Tâche supprimée avec succès');
     }
+  };
+
+  // Ajouter un commentaire à une tâche
+  const handleAddComment = async (
+    e: React.FormEvent<HTMLFormElement>,
+    taskId: string,
+    projectId: string,
+  ) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const content = formData.get('comment') as string;
+    await addComment(projectId, taskId, content);
+    toast.success('Commentaire ajouté avec succès');
+    form.reset();
   };
 
   if (tasks.length === 0) {
@@ -129,13 +144,12 @@ export default function Tasks({
                   </div>
                 ))
               )}
-              <form className="add-comment-form">
-                <input
-                  type="text"
-                  
-                  placeholder="Écrivez votre message ici"
-                />
-                <button>Envoyer</button>
+              <form
+                className="add-comment-form"
+                onSubmit={(e) => handleAddComment(e, task.id, task.projectId)}
+              >
+                <input type="text" name="comment" placeholder="Écrivez votre message ici" />
+                <button type="submit">Envoyer</button>
               </form>
             </div>
           </div>

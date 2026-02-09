@@ -21,6 +21,7 @@ type TasksContextType = {
   createTask: (projectId: string, payload: CreateTaskPayload) => Promise<void>;
   updateTask: (projectId: string, taskId: string, payload: UpdateTaskPayload) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
+  addComment: (projectId: string, taskId: string, content: string) => Promise<void>;
 };
 
 type UpdateTaskPayload = CreateTaskPayload;
@@ -121,6 +122,36 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     [fetchProjectTasks],
   );
 
+  // Ajouter un commentaire à une tâche
+  const addComment = useCallback(async (projectId: string, taskId: string, content: string) => {
+    const trimmed = content.trim();
+    if (!trimmed) return;
+    setError(null);
+    try {
+      const res = await api.post(`/projects/${projectId}/tasks/${taskId}/comments`, {
+        content: trimmed,
+      });
+      const createdComment = res.data?.data?.comment ?? res.data?.comment ?? res.data;
+
+      setProjectTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                comments: [...(task.comments ?? []), createdComment],
+              }
+            : task,
+        ),
+      );
+      return createdComment;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de l'ajout du commentaire");
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       assignedTasks,
@@ -132,6 +163,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       createTask,
       updateTask,
       deleteTask,
+      addComment,
     }),
     [
       assignedTasks,
@@ -143,6 +175,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       createTask,
       updateTask,
       deleteTask,
+      addComment,
     ],
   );
 
