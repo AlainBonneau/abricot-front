@@ -4,7 +4,7 @@ import { api } from '@/app/api/axiosConfig';
 import { useProjects } from '@/app/context/ProjectsContext';
 import type { ProjectMember } from '@/app/types/project';
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './EditProjectModal.scss';
 
 type User = {
@@ -35,17 +35,80 @@ export default function EditProjectModal({
   const [users, setUsers] = useState<User[]>([]);
   const [selectedContributorIds, setSelectedContributorIds] = useState<string[]>([]);
   const [initialContributorIds, setInitialContributorIds] = useState<string[]>([]);
-
   const [isContributorOpen, setIsContributorOpen] = useState(false);
+
   const isFormValid = title.trim() !== '' && description.trim() !== '';
 
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const lastActiveElementRef = useRef<HTMLElement | null>(null);
+  const contributorTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const firstContributorCheckboxRef = useRef<HTMLInputElement | null>(null);
+
+  // Permet de focus le premier élément focusable de la modal
+  const getFocusableElements = () => {
+    const root = modalRef.current;
+    if (!root) return [];
+
+    const selectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    return Array.from(root.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+  };
+
+  const trapTabKey = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const focusables = getFocusableElements();
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (active && modalRef.current && !modalRef.current.contains(active)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (active === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  // Charger les données du projet quand la modal s'ouvre
   useEffect(() => {
     if (!isOpen) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTitle(project?.name ?? '');
     setDescription(project?.description ?? '');
+    setIsContributorOpen(false);
+    lastActiveElementRef.current = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => titleInputRef.current?.focus());
+    return () => {
+      lastActiveElementRef.current?.focus?.();
+    };
   }, [isOpen, project]);
 
+  // Charger la liste des contributeurs du projet à l'ouverture de la modal
   useEffect(() => {
     if (!isOpen) return;
 
@@ -105,19 +168,10 @@ export default function EditProjectModal({
         .filter((u) => selectedContributorIds.includes(u.id))
         .map((u) => ({
           id: u.id,
-          user: {
-            id: u.id,
-            name: u.name,
-            email: u.email,
-          },
+          user: { id: u.id, name: u.name, email: u.email },
         }));
 
-      onUpdated({
-        name: nextName,
-        description: nextDescription,
-        members: nextMembers,
-      });
-
+      onUpdated({ name: nextName, description: nextDescription, members: nextMembers });
       onClose();
     } catch (e) {
       console.error(e);
@@ -125,26 +179,31 @@ export default function EditProjectModal({
     }
   };
 
-  // Ferme la modal si l'utilisateur appuie sur Échap
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isOpen]);
-
   if (!isOpen) return null;
 
   return (
     <div className="edit-project-modal-overlay" onClick={onClose} role="presentation">
       <div
+        ref={modalRef}
         className="edit-project-modal"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-project-title"
         aria-describedby="edit-project-desc"
+        tabIndex={-1}
+        onKeyDown={(e) => {
+          trapTabKey(e);
+
+          if (e.key === 'Escape') {
+            if (isContributorOpen) {
+              setIsContributorOpen(false);
+              requestAnimationFrame(() => contributorTriggerRef.current?.focus());
+              return;
+            }
+            onClose();
+          }
+        }}
       >
         <div className="edit-project-modal-header">
           <h4 id="edit-project-title">Modifier le projet</h4>
@@ -161,6 +220,7 @@ export default function EditProjectModal({
           <label>
             Titre*
             <input
+              ref={titleInputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -181,12 +241,25 @@ export default function EditProjectModal({
             Contributeurs :
             <div className="contributor-select">
               <button
+                ref={contributorTriggerRef}
                 type="button"
                 className="contributor-select-trigger"
                 aria-label="Ouvrir le sélecteur de contributeurs"
-                aria-haspopup="listbox"
+                aria-haspopup="true"
                 aria-expanded={isContributorOpen}
-                onClick={() => setIsContributorOpen((prev) => !prev)}
+                onClick={() => {
+                  setIsContributorOpen((prev) => !prev);
+                  if (!isContributorOpen) {
+                    requestAnimationFrame(() => firstContributorCheckboxRef.current?.focus());
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setIsContributorOpen(true);
+                    requestAnimationFrame(() => firstContributorCheckboxRef.current?.focus());
+                  }
+                }}
               >
                 {selectedContributorIds.length === 0
                   ? 'Choisir un ou plusieurs contributeurs'
@@ -194,17 +267,14 @@ export default function EditProjectModal({
               </button>
 
               {isContributorOpen && (
-                <div
-                  className="contributor-select-dropdown"
-                  role="listbox"
-                  aria-multiselectable="true"
-                >
-                  {users.map((user) => {
+                <div className="contributor-select-dropdown">
+                  {users.map((user, index) => {
                     const checked = selectedContributorIds.includes(user.id);
 
                     return (
                       <label key={user.id} className="contributor-option">
                         <input
+                          ref={index === 0 ? firstContributorCheckboxRef : undefined}
                           type="checkbox"
                           checked={checked}
                           onChange={() =>
