@@ -4,7 +4,7 @@ import { api } from '@/app/api/axiosConfig';
 import { useTasks } from '@/app/context/TasksContext';
 import type { Task } from '@/app/types/task';
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './EditTaskModal.scss';
 
 type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
@@ -37,11 +37,105 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
       d.getUTCDate(),
     ).padStart(2, '0')}`;
   });
+
   const [users, setUsers] = useState<User[]>([]);
   const [assignees, setAssignees] = useState<string[]>([]);
-  const [isAssigneeOpen, setIsAssigneeOpen] = useState<boolean>(false);
+  const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
 
   const isFormValid = title.trim() !== '' && description.trim() !== '' && dueDate !== '';
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const lastActiveElementRef = useRef<HTMLElement | null>(null);
+  const firstAssigneeCheckboxRef = useRef<HTMLInputElement | null>(null);
+  const assigneeTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const assigneesLabel = useMemo(
+    () =>
+      assignees.length === 0
+        ? 'Choisir un ou plusieurs collaborateurs'
+        : `${assignees.length} collaborateur(s) sélectionné(s)`,
+    [assignees.length],
+  );
+
+  // Permet de focus le premier élément focusable de la modal
+  const getFocusableElements = () => {
+    const root = modalRef.current;
+    if (!root) return [];
+
+    const selectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    return Array.from(root.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+  };
+
+  const trapTabKey = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const focusables = getFocusableElements();
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (active && modalRef.current && !modalRef.current.contains(active)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (active === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  // Charger les données de la tâche à l'ouverture de la modal
+  useEffect(() => {
+    if (!isOpen || !task) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTitle(task.title ?? '');
+    setDescription(task.description ?? '');
+    setStatus((task.status as Status) ?? 'TODO');
+    setPriority((task.priority as Priority) ?? 'MEDIUM');
+
+    const nextDueDate = (() => {
+      if (!task.dueDate) return '';
+      const d = new Date(task.dueDate);
+      return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(
+        d.getUTCDate(),
+      ).padStart(2, '0')}`;
+    })();
+
+    setDueDate(nextDueDate);
+    setAssignees([]);
+    setIsAssigneeOpen(false);
+
+    lastActiveElementRef.current = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => titleInputRef.current?.focus());
+
+    return () => {
+      lastActiveElementRef.current?.focus?.();
+    };
+  }, [isOpen, task]);
 
   // Charger les contributeurs quand la modal s'ouvre
   useEffect(() => {
@@ -50,9 +144,10 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
     const fetchUsers = async () => {
       try {
         const res = await api.get(`/projects/${projectId}/contributors`);
-        setUsers(res.data.data.contributors);
+        setUsers(res.data.data.contributors ?? []);
       } catch (error) {
         console.error('Erreur chargement contributeurs', error);
+        setUsers([]);
       }
     };
 
@@ -82,26 +177,31 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
     }
   };
 
-  // Ferme la modal si l'utilisateur appuie sur Échap
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isOpen]);
-
   if (!isOpen || !task) return null;
 
   return (
     <div className="edit-task-modal-overlay" onClick={onClose} role="presentation">
       <div
+        ref={modalRef}
         className="edit-task-modal"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-task-title"
         aria-describedby="edit-task-desc"
+        tabIndex={-1}
+        onKeyDown={(e) => {
+          trapTabKey(e);
+
+          if (e.key === 'Escape') {
+            if (isAssigneeOpen) {
+              setIsAssigneeOpen(false);
+              requestAnimationFrame(() => assigneeTriggerRef.current?.focus());
+              return;
+            }
+            onClose();
+          }
+        }}
       >
         {/* HEADER */}
         <div className="edit-task-modal-header">
@@ -119,7 +219,12 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
 
           <label>
             Titre*
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </label>
 
           <label>
@@ -146,42 +251,54 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
             Assigné à :
             <div className="assignee-select">
               <button
+                ref={assigneeTriggerRef}
                 type="button"
                 className="assignee-select-trigger"
                 aria-label="Ouvrir le sélecteur de collaborateurs"
-                aria-haspopup="listbox"
+                aria-haspopup="true"
                 aria-expanded={isAssigneeOpen}
-                onClick={() => setIsAssigneeOpen((prev) => !prev)}
+                onClick={() => {
+                  setIsAssigneeOpen((prev) => !prev);
+                  if (!isAssigneeOpen) {
+                    requestAnimationFrame(() => firstAssigneeCheckboxRef.current?.focus());
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setIsAssigneeOpen(true);
+                    requestAnimationFrame(() => firstAssigneeCheckboxRef.current?.focus());
+                  }
+                }}
               >
-                {assignees.length === 0
-                  ? 'Choisir un ou plusieurs collaborateurs'
-                  : `${assignees.length} collaborateur(s) sélectionné(s)`}
+                {assigneesLabel}
               </button>
 
               {isAssigneeOpen && (
-                <div
-                  className="assignee-select-dropdown"
-                  role="listbox"
-                  aria-multiselectable="true"
-                >
-                  {users.map((user) => {
-                    const checked = assignees.includes(user.id);
+                <div className="assignee-select-dropdown">
+                  {users.length === 0 ? (
+                    <p className="contributors-empty">Aucun collaborateur disponible.</p>
+                  ) : (
+                    users.map((user, index) => {
+                      const checked = assignees.includes(user.id);
 
-                    return (
-                      <label key={user.id} className="assignee-option">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            setAssignees((prev) =>
-                              checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
-                            )
-                          }
-                        />
-                        <span>{user.name}</span>
-                      </label>
-                    );
-                  })}
+                      return (
+                        <label key={user.id} className="assignee-option">
+                          <input
+                            ref={index === 0 ? firstAssigneeCheckboxRef : undefined}
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() =>
+                              setAssignees((prev) =>
+                                checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
+                              )
+                            }
+                          />
+                          <span>{user.name}</span>
+                        </label>
+                      );
+                    })
+                  )}
                 </div>
               )}
             </div>
