@@ -5,7 +5,9 @@ import { useProjects } from '@/app/context/ProjectsContext';
 import type { ProjectMember } from '@/app/types/project';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import './EditProjectModal.scss';
+import axios from 'axios';
 
 type User = {
   id: string;
@@ -172,10 +174,18 @@ export default function EditProjectModal({
         }));
 
       onUpdated({ name: nextName, description: nextDescription, members: nextMembers });
+      toast.success('Projet mis à jour avec succès');
       onClose();
     } catch (e) {
       console.error(e);
-      alert('Erreur lors de la mise à jour du projet');
+
+      const message = axios.isAxiosError(e)
+        ? ((e.response?.data)?.message ?? 'Erreur lors de la mise à jour du projet')
+        : e instanceof Error
+          ? e.message
+          : 'Erreur lors de la mise à jour du projet';
+
+      toast.error(message);
     }
   };
 

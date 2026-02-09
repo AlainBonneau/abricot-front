@@ -3,6 +3,7 @@ import type { Task } from '@/app/types/task';
 import { dateFormatter, getInitials, taskStatusFormatter } from '@/app/utils/function';
 import { CalendarDays, ChevronDown, Ellipsis } from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import './Tasks.scss';
 
 export default function Tasks({
@@ -27,6 +28,7 @@ export default function Tasks({
   const handleDeleteTask = async (taskId: string, projectId: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
       await deleteTask(projectId, taskId);
+      toast.success('Tâche supprimée avec succès');
     }
   };
 

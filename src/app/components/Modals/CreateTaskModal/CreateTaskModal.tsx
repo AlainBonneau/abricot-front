@@ -4,6 +4,7 @@ import { api } from '@/app/api/axiosConfig';
 import { useTasks } from '@/app/context/TasksContext';
 import { X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import './CreateTaskModal.scss';
 
 type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
@@ -147,6 +148,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
       status,
     });
 
+    toast.success('Tâche créée avec succès');
     onClose();
   };
 
