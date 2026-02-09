@@ -12,6 +12,7 @@ import { Task } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import ContributorComponent from './components/ContributorComponent/ContributorComponent';
 import TaskComponent from './components/TaskComponent/TaskComponent';
 import './page.scss';
@@ -72,7 +73,24 @@ export default function ProjectPage() {
             >
               Modifier
             </button>
-            <button onClick={() => deleteProject(id)}>Supprimer</button>
+            <button
+              onClick={async () => {
+                try {
+                  await deleteProject(id);
+                } catch (err) {
+                  console.log('Erreur récupérée dans la page:', err);
+
+                  const message =
+                    err instanceof Error
+                      ? err.response?.data?.message ?? err.message
+                      : 'Erreur lors de la suppression du projet';
+
+                  toast.error(message ?? 'Erreur lors de la suppression du projet');
+                }
+              }}
+            >
+              Supprimer
+            </button>
           </div>
           <p>{project?.description}</p>
         </div>

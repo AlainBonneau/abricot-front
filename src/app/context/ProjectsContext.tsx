@@ -98,8 +98,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       router.push('/projets');
       await fetchProjects();
     } catch (err) {
-      setError('Erreur lors de la suppression du projet');
       console.error(err);
+      setError('Erreur lors de la suppression du projet');
       throw err;
     } finally {
       setIsLoading(false);
@@ -114,7 +114,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       await api.post(`/projects/${projectId}/contributors`, { email });
     } catch (err) {
       setError("Erreur lors de l'ajout du contributeur");
-      console.error(err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -129,7 +128,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       await api.delete(`/projects/${projectId}/contributors/${userId}`);
     } catch (err) {
       setError('Erreur lors de la suppression du contributeur');
-      console.error(err);
       throw err;
     } finally {
       setIsLoading(false);

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 import LayoutShell from './components/LayoutShell';
 import { AuthProvider } from './context/AuthContext';
 import { ProjectsProvider } from './context/ProjectsContext';
@@ -29,6 +30,26 @@ export default function RootLayout({
           <ProjectsProvider>
             <TasksProvider>
               <LayoutShell>{children}</LayoutShell>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#1f2937',
+                    color: '#fff',
+                  },
+                  success: {
+                    style: {
+                      background: '#16a34a',
+                    },
+                  },
+                  error: {
+                    style: {
+                      background: '#dc2626',
+                    },
+                  },
+                }}
+              />
             </TasksProvider>
           </ProjectsProvider>
         </AuthProvider>
