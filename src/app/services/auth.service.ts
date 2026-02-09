@@ -8,7 +8,6 @@ export async function login(email: string, password: string) {
 }
 
 export async function register(name: string, email: string, password: string) {
-  // adapte les champs si ton backend attend autre chose
   const res = await api.post<AuthApiResponse>('/auth/register', {
     name,
     email,
