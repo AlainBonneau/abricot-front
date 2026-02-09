@@ -9,28 +9,34 @@ import type {
 } from '@/app/types/task';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
+type UpdateTaskPayload = CreateTaskPayload;
+
+type TasksByProjectId = Record<string, Task[]>;
+
 type TasksContextType = {
   assignedTasks: Task[];
   projectTasks: Task[];
+  tasksByProjectId: TasksByProjectId;
 
   isLoading: boolean;
   error: string | null;
 
   fetchAssignedTasks: (userId: string) => Promise<void>;
-  fetchProjectTasks: (projectId: string) => Promise<void>;
+  fetchProjectTasks: (projectId: string) => Promise<Task[]>;
+
   createTask: (projectId: string, payload: CreateTaskPayload) => Promise<void>;
   updateTask: (projectId: string, taskId: string, payload: UpdateTaskPayload) => Promise<void>;
   deleteTask: (projectId: string, taskId: string) => Promise<void>;
-  addComment: (projectId: string, taskId: string, content: string) => Promise<void>;
-};
 
-type UpdateTaskPayload = CreateTaskPayload;
+  addComment: (projectId: string, taskId: string, content: string) => Promise<unknown>;
+};
 
 const TasksContext = createContext<TasksContextType | null>(null);
 
 export function TasksProvider({ children }: { children: React.ReactNode }) {
   const [assignedTasks, setAssignedTasks] = useState<Task[]>([]);
   const [projectTasks, setProjectTasks] = useState<Task[]>([]);
+  const [tasksByProjectId, setTasksByProjectId] = useState<TasksByProjectId>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,24 +49,35 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
       const response = await api.get<AssignedTasksResponse>('/dashboard/assigned-tasks', {
         params: { userId },
       });
-      setAssignedTasks(response.data.data.tasks);
+
+      setAssignedTasks(response.data.data.tasks ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur chargement tâches assignées');
+      throw e;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Charger les tâches d'un projet
+  // Charger les tâches d'un projet (alimente projectTasks + cache tasksByProjectId)
   const fetchProjectTasks = useCallback(async (projectId: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await api.get<TasksOnlyResponse>(`/projects/${projectId}/tasks`);
-      setProjectTasks(res.data.data.tasks ?? []);
+      const tasks = res.data.data.tasks ?? [];
+
+      // page projet (détail)
+      setProjectTasks(tasks);
+
+      // cache page projets (liste)
+      setTasksByProjectId((prev) => ({ ...prev, [projectId]: tasks }));
+
+      return tasks;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur chargement tâches projet');
+      throw e;
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +126,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     async (projectId: string, taskId: string) => {
       setIsLoading(true);
       setError(null);
+
       try {
         await api.delete(`/projects/${projectId}/tasks/${taskId}`);
         await fetchProjectTasks(projectId);
@@ -126,29 +144,40 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
   const addComment = useCallback(async (projectId: string, taskId: string, content: string) => {
     const trimmed = content.trim();
     if (!trimmed) return;
+
     setError(null);
+
     try {
       const res = await api.post(`/projects/${projectId}/tasks/${taskId}/comments`, {
         content: trimmed,
       });
-      const createdComment = res.data?.data?.comment ?? res.data?.comment ?? res.data;
+
+      const createdComment = res.data?.data?.comment;
 
       setProjectTasks((prev) =>
         prev.map((task) =>
           task.id === taskId
-            ? {
-                ...task,
-                comments: [...(task.comments ?? []), createdComment],
-              }
+            ? { ...task, comments: [...(task.comments ?? []), createdComment] }
             : task,
         ),
       );
+
+      setTasksByProjectId((prev) => {
+        const tasks = prev[projectId] ?? [];
+        return {
+          ...prev,
+          [projectId]: tasks.map((task) =>
+            task.id === taskId
+              ? { ...task, comments: [...(task.comments ?? []), createdComment] }
+              : task,
+          ),
+        };
+      });
+
       return createdComment;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur lors de l'ajout du commentaire");
       throw e;
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -156,6 +185,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     () => ({
       assignedTasks,
       projectTasks,
+      tasksByProjectId,
       isLoading,
       error,
       fetchAssignedTasks,
@@ -168,6 +198,7 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     [
       assignedTasks,
       projectTasks,
+      tasksByProjectId,
       isLoading,
       error,
       fetchAssignedTasks,
