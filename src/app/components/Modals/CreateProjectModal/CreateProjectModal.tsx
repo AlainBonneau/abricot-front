@@ -33,14 +33,61 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
-  const firstSentinelRef = useRef<HTMLSpanElement | null>(null);
-  const lastSentinelRef = useRef<HTMLSpanElement | null>(null);
   const contributorTriggerRef = useRef<HTMLButtonElement | null>(null);
   const firstContributorCheckboxRef = useRef<HTMLInputElement | null>(null);
 
-  // Reset le state de la modal à chaque ouverture et focus le titre
+  // Permet de focus le premier élément focusable de la modal
+  const getFocusableElements = () => {
+    const root = modalRef.current;
+    if (!root) return [];
+
+    const selectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    return Array.from(root.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+  };
+
+  const trapTabKey = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const focusables = getFocusableElements();
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (active && modalRef.current && !modalRef.current.contains(active)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (active === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) return;
+
     setTitle('');
     setDescription('');
     setSelectedContributorIds([]);
@@ -53,7 +100,7 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
     };
   }, [isOpen]);
 
-  // Charger les contributeurs quand la modal s'ouvre
+  // Charger la liste des contributeurs à l'ouverture de la modal
   useEffect(() => {
     if (!isOpen) return;
 
@@ -94,26 +141,6 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
     onClose();
   };
 
-  // Permet de focus le premier élément focusable de la modal
-  const focusFirst = () => {
-    const root = modalRef.current;
-    if (!root) return;
-    const focusables = root.querySelectorAll<HTMLElement>(
-      'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
-    focusables[0]?.focus();
-  };
-
-  // Permet de focus le dernier élément focusable de la modal
-  const focusLast = () => {
-    const root = modalRef.current;
-    if (!root) return;
-    const focusables = root.querySelectorAll<HTMLElement>(
-      'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
-    focusables[focusables.length - 1]?.focus();
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -128,6 +155,8 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
         aria-describedby="create-project-desc"
         tabIndex={-1}
         onKeyDown={(e) => {
+          trapTabKey(e);
+
           if (e.key === 'Escape') {
             if (isContributorOpen) {
               setIsContributorOpen(false);
@@ -138,15 +167,6 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
           }
         }}
       >
-        {/* sentinel pour empêcher le focus de sortir de la modal */}
-        <span
-          ref={firstSentinelRef}
-          tabIndex={0}
-          aria-hidden="true"
-          className="sr-only"
-          onFocus={focusLast}
-        />
-
         {/* HEADER */}
         <div className="create-project-modal-header">
           <h4 id="create-project-title">Créer un projet</h4>
@@ -265,15 +285,6 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
             </button>
           </div>
         </div>
-
-        {/* sentinel pour empêcher le focus de sortir de la modal */}
-        <span
-          ref={lastSentinelRef}
-          tabIndex={0}
-          aria-hidden="true"
-          className="sr-only"
-          onFocus={focusFirst}
-        />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { api } from '@/app/api/axiosConfig';
 import { useTasks } from '@/app/context/TasksContext';
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './CreateTaskModal.scss';
 
 type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
@@ -21,6 +21,7 @@ type Props = {
 
 export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
   const { createTask } = useTasks();
+
   const [users, setUsers] = useState<User[]>([]);
   const [status, setStatus] = useState<Status>('TODO');
   const [title, setTitle] = useState('');
@@ -28,19 +29,104 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM');
   const [assignees, setAssignees] = useState<string[]>([]);
-  const [isAssigneeOpen, setIsAssigneeOpen] = useState<boolean>(false);
+  const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
+
   const isFormValid = title.trim() !== '' && description.trim() !== '' && dueDate !== '';
 
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const lastActiveElementRef = useRef<HTMLElement | null>(null);
+  const firstAssigneeCheckboxRef = useRef<HTMLInputElement | null>(null);
+  const assigneeTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const isOpenAssigneesLabel = useMemo(
+    () =>
+      assignees.length === 0
+        ? 'Choisir un ou plusieurs collaborateurs'
+        : `${assignees.length} collaborateur(s) sélectionné(s)`,
+    [assignees.length],
+  );
+
+  // Permet de focus le premier élément focusable de la modal
+  const getFocusableElements = () => {
+    const root = modalRef.current;
+    if (!root) return [];
+
+    const selectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    return Array.from(root.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+  };
+
+  const trapTabKey = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const focusables = getFocusableElements();
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (active && modalRef.current && !modalRef.current.contains(active)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (active === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  // Reset le state de la modal à chaque ouverture et focus le titre + restore focus à la fermeture
+  useEffect(() => {
+    if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStatus('TODO');
+    setTitle('');
+    setDescription('');
+    setDueDate('');
+    setPriority('MEDIUM');
+    setAssignees([]);
+    setIsAssigneeOpen(false);
+
+    lastActiveElementRef.current = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => titleInputRef.current?.focus());
+
+    return () => {
+      lastActiveElementRef.current?.focus?.();
+    };
+  }, [isOpen]);
+
+  // Charger les contributeurs quand la modal s'ouvre
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchUsers = async () => {
       try {
         const res = await api.get(`/projects/${projectId}/contributors`);
-
-        setUsers(res.data.data.contributors);
+        setUsers(res.data.data.contributors ?? []);
       } catch (error) {
         console.error('Erreur chargement contributeurs', error);
+        setUsers([]);
       }
     };
 
@@ -64,26 +150,31 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
     onClose();
   };
 
-  // Ferme la modal si l'utilisateur appuie sur Échap
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isOpen]);
-
   if (!isOpen) return null;
 
   return (
     <div className="create-task-modal-overlay" onClick={onClose} role="presentation">
       <div
+        ref={modalRef}
         className="create-task-modal"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="create-task-title"
         aria-describedby="create-task-desc"
+        tabIndex={-1}
+        onKeyDown={(e) => {
+          trapTabKey(e);
+
+          if (e.key === 'Escape') {
+            if (isAssigneeOpen) {
+              setIsAssigneeOpen(false);
+              requestAnimationFrame(() => assigneeTriggerRef.current?.focus());
+              return;
+            }
+            onClose();
+          }
+        }}
       >
         {/* HEADER */}
         <div className="create-task-modal-header">
@@ -99,9 +190,19 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
 
         {/* BODY */}
         <div className="create-task-modal-body">
+          <p id="create-task-desc" className="sr-only">
+            Renseigne le titre, la description, la priorité, l’échéance, les assignés et le statut,
+            puis valide.
+          </p>
+
           <label>
             Titre*
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </label>
 
           <label>
@@ -131,49 +232,61 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
             Assigné à :
             <div className="assignee-select">
               <button
+                ref={assigneeTriggerRef}
                 type="button"
                 className="assignee-select-trigger"
                 aria-label="Ouvrir le sélecteur de collaborateurs"
-                aria-haspopup="listbox"
+                aria-haspopup="true"
                 aria-expanded={isAssigneeOpen}
-                onClick={() => setIsAssigneeOpen((prev) => !prev)}
+                onClick={() => {
+                  setIsAssigneeOpen((prev) => !prev);
+                  if (!isAssigneeOpen) {
+                    requestAnimationFrame(() => firstAssigneeCheckboxRef.current?.focus());
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setIsAssigneeOpen(true);
+                    requestAnimationFrame(() => firstAssigneeCheckboxRef.current?.focus());
+                  }
+                }}
               >
-                {assignees.length === 0
-                  ? 'Choisir un ou plusieurs collaborateurs'
-                  : `${assignees.length} collaborateur(s) sélectionné(s)`}
+                {isOpenAssigneesLabel}
               </button>
 
               {isAssigneeOpen && (
-                <div
-                  className="assignee-select-dropdown"
-                  role="listbox"
-                  aria-multiselectable="true"
-                >
-                  {users.map((user) => {
-                    const checked = assignees.includes(user.id);
+                <div className="assignee-select-dropdown">
+                  {users.length === 0 ? (
+                    <p className="contributors-empty">Aucun collaborateur disponible.</p>
+                  ) : (
+                    users.map((user, index) => {
+                      const checked = assignees.includes(user.id);
 
-                    return (
-                      <label key={user.id} className="assignee-option">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            setAssignees((prev) =>
-                              checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
-                            )
-                          }
-                        />
-                        <span>{user.name}</span>
-                      </label>
-                    );
-                  })}
+                      return (
+                        <label key={user.id} className="assignee-option">
+                          <input
+                            ref={index === 0 ? firstAssigneeCheckboxRef : undefined}
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() =>
+                              setAssignees((prev) =>
+                                checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
+                              )
+                            }
+                          />
+                          <span>{user.name}</span>
+                        </label>
+                      );
+                    })
+                  )}
                 </div>
               )}
             </div>
           </label>
 
           {/* STATUS */}
-          <div className="status-container">
+          <div className="status-container" role="radiogroup" aria-label="Statut de la tâche">
             <button
               type="button"
               aria-label='Définir le statut à "À faire"'
@@ -207,6 +320,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
               Terminée
             </button>
           </div>
+
           {/* FOOTER */}
           <div className="create-task-modal-footer">
             <button
