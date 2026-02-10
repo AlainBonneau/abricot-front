@@ -147,6 +147,17 @@ export default function ProfileForm({ user }: { user: User }) {
         />
       </div>
 
+      <div className="form-group">
+        <label htmlFor="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          value="********"
+          disabled
+          aria-describedby="passwordHelp"
+        />
+      </div>
+
       <div className="password-section">
         {!isPasswordOpen ? (
           <button
