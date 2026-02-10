@@ -2,6 +2,7 @@
 
 import { api } from '@/app/api/axiosConfig';
 import Loader from '@/app/components/Loader/Loader';
+import CreateAiTaskModal from '@/app/components/Modals/CreateAiTaskModal/CreateAiTaskModal';
 import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
 import EditProjectModal from '@/app/components/Modals/EditProjectModal/EditProjectModal';
 import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
@@ -25,6 +26,7 @@ export default function ProjectPage() {
 
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -108,7 +110,11 @@ export default function ProjectPage() {
           <button onClick={() => setIsCreateModalOpen(true)} aria-label="Créer une tâche">
             Créer une tâche
           </button>
-          <button className="create-task-ai-btn" aria-label="Créer une tâche avec l'IA">
+          <button
+            className="create-task-ai-btn"
+            aria-label="Créer une tâche avec l'IA"
+            onClick={() => setIsAiModalOpen(true)}
+          >
             <Image src="/images/star.png" alt="IA" width={21} height={21} />
             IA
           </button>
@@ -127,6 +133,13 @@ export default function ProjectPage() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         projectId={id}
+      />
+
+      <CreateAiTaskModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        projectId={id}
+        projectTitle={project?.name}
       />
 
       <EditTaskModal

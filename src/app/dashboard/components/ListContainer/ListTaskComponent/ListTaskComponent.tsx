@@ -31,7 +31,7 @@ export default function ListTaskComponent({ task }: { task: Task }) {
         <span className={`status-badge status-${task.status.toLowerCase()}`}>
           {taskStatusFormatter(task.status)}
         </span>
-        <Link href={`/tasks/${task.id}`} className="view-task-link">
+        <Link href={`/projets`} className="view-task-link">
           Voir
         </Link>
       </div>

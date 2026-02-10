@@ -38,7 +38,7 @@ export default function KanbanTaskContainer({ tasks }: KanbanTaskContainerProps)
               {task.comments.length}
             </p>
           </div>
-          <Link href={`/tasks/${task.id}`} className="view-task-link-kanban">
+          <Link href={`/projets`} className="view-task-link-kanban">
             Voir
           </Link>
         </div>
