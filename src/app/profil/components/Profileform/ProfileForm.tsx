@@ -149,13 +149,7 @@ export default function ProfileForm({ user }: { user: User }) {
 
       <div className="form-group">
         <label htmlFor="password">Mot de passe</label>
-        <input
-          id="password"
-          type="password"
-          value="********"
-          disabled
-          aria-describedby="passwordHelp"
-        />
+        <input id="password" type="password" value="********" disabled aria-label="password" />
       </div>
 
       <div className="password-section">

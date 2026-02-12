@@ -81,6 +81,7 @@ export default function TaskComponent({
             className="task-search"
             placeholder="Rechercher une tâche"
             value={search}
+            aria-label="Rechercher une tâche"
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>

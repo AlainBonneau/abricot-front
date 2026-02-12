@@ -101,12 +101,10 @@ export default function Tasks({
 
               <p className="item-description">{task.description}</p>
             </div>
-
             <p className="due-date-paragraph">
               Échéance : <CalendarDays className="calendar-icon" />
               <span>{dateFormatter(task.dueDate)}</span>
             </p>
-
             <div className="assigned-to">
               <p>Assigné à :</p>
               <div className="assigned-to-list">
@@ -118,7 +116,6 @@ export default function Tasks({
                 ))}
               </div>
             </div>
-
             {/* Toggle commentaires */}
             <button
               className={`comments-toggle ${isOpen ? 'open' : ''}`}
@@ -128,7 +125,6 @@ export default function Tasks({
               Commentaires ({task.comments.length})
               <ChevronDown size={16} />
             </button>
-
             {/* Commentaires */}
             <div className={`comments-container ${isOpen ? 'open' : ''}`}>
               {task.comments.length === 0 ? (
@@ -148,13 +144,19 @@ export default function Tasks({
                 className="add-comment-form"
                 onSubmit={(e) => handleAddComment(e, task.id, task.projectId)}
               >
-                <input type="text" name="comment" placeholder="Écrivez votre message ici" />
-                <button type="submit">Envoyer</button>
-              </form>
-            </div>
+                {' '}
+                <input
+                  type="text"
+                  name="comment"
+                  placeholder="Écrivez votre message ici"
+                  aria-label="Écrivez votre message ici"
+                />{' '}
+                <button type="submit">Envoyer</button>{' '}
+              </form>{' '}
+            </div>{' '}
           </div>
         );
-      })}
+      })}{' '}
     </div>
   );
 }
