@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Loader from '../components/Loader/Loader';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import ProfileForm from './components/Profileform/ProfileForm';
 import './page.scss';
@@ -21,12 +22,14 @@ export default function ProfilPage() {
   if (!user) return null;
 
   return (
-    <div className='profil-page'>
-      <section className="profil-container">
-        <h5>Mon compte</h5>
-        <p>{user.name || 'Utilisateur inconnu'}</p>
-        <ProfileForm user={user} />
-      </section>
-    </div>
+    <ProtectedRoute>
+      <div className="profil-page">
+        <section className="profil-container">
+          <h5>Mon compte</h5>
+          <p>{user.name || 'Utilisateur inconnu'}</p>
+          <ProfileForm user={user} />
+        </section>
+      </div>
+    </ProtectedRoute>
   );
 }

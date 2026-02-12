@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '../components/Loader/Loader';
 import CreateProjectModal from '../components/Modals/CreateProjectModal/CreateProjectModal';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../context/TasksContext';
 import KanbanContainer from './components/KanbanContainer/KanbanContainer';
@@ -13,7 +13,6 @@ import './page.scss';
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
-  const router = useRouter();
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -22,64 +21,72 @@ export default function DashboardPage() {
   const userId = user?.id;
 
   useEffect(() => {
-    if (!isLoading && !user) router.replace('/login');
-  }, [isLoading, user, router]);
-
-  useEffect(() => {
     if (!isLoading && userId) {
       fetchAssignedTasks(userId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, userId]);
 
-  if (isLoading || !user || tasksLoading) return <Loader />;
-
   return (
-    <div className="dashboard-page">
-      <section className="dashboard-head">
-        <div>
-          <h4>Tableau de bord</h4>
-          <p>Bonjour {user.name}, voici un aperçu de vos projets et tâches</p>
+    <ProtectedRoute>
+      {isLoading || !user || tasksLoading ? (
+        <Loader />
+      ) : (
+        <div className="dashboard-page">
+          <section className="dashboard-head">
+            <div>
+              <h4>Tableau de bord</h4>
+              <p>Bonjour {user.name}, voici un aperçu de vos projets et tâches</p>
+            </div>
+            <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
+              + Créer un projet
+            </button>
+          </section>
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+
+          <section className="list-kanban-container">
+            <div className="list-kanban-btn-container">
+              <button
+                aria-label="Activer la vue list"
+                className={'dashboard-btn ' + (viewMode === 'list' ? 'btn-active' : '')}
+                onClick={() => setViewMode('list')}
+              >
+                <Image
+                  src="/images/list-img.png"
+                  alt="logo du bouton liste"
+                  width={16}
+                  height={16}
+                />
+                Liste
+              </button>
+              <button
+                aria-label="Activer la vue kanban"
+                className={'dashboard-btn ' + (viewMode === 'kanban' ? 'btn-active' : '')}
+                onClick={() => setViewMode('kanban')}
+              >
+                <Image
+                  src="/images/kanban-img.png"
+                  alt="logo du bouton kanban"
+                  width={16}
+                  height={16}
+                />
+                Kanban
+              </button>
+            </div>
+
+            {viewMode === 'list' ? (
+              <ListContainer assignedTasks={assignedTasks} />
+            ) : (
+              <KanbanContainer tasks={assignedTasks} />
+            )}
+          </section>
+          <CreateProjectModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+          />
         </div>
-        <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
-          + Créer un projet
-        </button>
-      </section>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      <section className="list-kanban-container">
-        <div className="list-kanban-btn-container">
-          <button
-            aria-label="Activer la vue list"
-            className={'dashboard-btn ' + (viewMode === 'list' ? 'btn-active' : '')}
-            onClick={() => setViewMode('list')}
-          >
-            <Image src="/images/list-img.png" alt="logo du bouton liste" width={16} height={16} />
-            Liste
-          </button>
-          <button
-            aria-label="Activer la vue kanban"
-            className={'dashboard-btn ' + (viewMode === 'kanban' ? 'btn-active' : '')}
-            onClick={() => setViewMode('kanban')}
-          >
-            <Image
-              src="/images/kanban-img.png"
-              alt="logo du bouton kanban"
-              width={16}
-              height={16}
-            />
-            Kanban
-          </button>
-        </div>
-
-        {viewMode === 'list' ? (
-          <ListContainer assignedTasks={assignedTasks} />
-        ) : (
-          <KanbanContainer tasks={assignedTasks} />
-        )}
-      </section>
-      <CreateProjectModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-    </div>
+      )}
+    </ProtectedRoute>
   );
 }

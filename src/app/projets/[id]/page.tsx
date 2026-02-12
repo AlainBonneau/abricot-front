@@ -6,6 +6,7 @@ import CreateAiTaskModal from '@/app/components/Modals/CreateAiTaskModal/CreateA
 import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
 import EditProjectModal from '@/app/components/Modals/EditProjectModal/EditProjectModal';
 import EditTaskModal from '@/app/components/Modals/EditTaskModal/EditTaskModal';
+import ProtectedRoute from '@/app/components/ProtectedRoute';
 import { useProjects } from '@/app/context/ProjectsContext';
 import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectMember, ProjectResponse } from '@/app/types/project';
@@ -60,104 +61,107 @@ export default function ProjectPage() {
     setProject((prev) => (prev ? { ...prev, ...next } : prev));
   };
 
-  if (isLoading) return <Loader />;
-  if (error) return <p>{error}</p>;
+  // if (isLoading) return <Loader />;
+  // if (error) return <p>{error}</p>;
 
   return (
-    <div className="projet-page">
-      <section className="projet-page-head">
-        <div className="projet-page-head-left">
-          <div className="head-left-title">
-            <h4>{project?.name}</h4>
-            <button
-              aria-label="Modifier le nom ou la description du projet"
-              onClick={() => setIsEditProjectModalOpen(true)}
-            >
-              Modifier
+    <ProtectedRoute>
+      {isLoading ? <Loader /> : error ? <p>{error}</p> : null}
+      <div className="projet-page">
+        <section className="projet-page-head">
+          <div className="projet-page-head-left">
+            <div className="head-left-title">
+              <h4>{project?.name}</h4>
+              <button
+                aria-label="Modifier le nom ou la description du projet"
+                onClick={() => setIsEditProjectModalOpen(true)}
+              >
+                Modifier
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+                      await deleteProject(id);
+                      toast.success('Projet supprimé avec succès');
+                    }
+                  } catch (err) {
+                    console.log('Erreur récupérée dans la page:', err);
+
+                    let message = 'Erreur lors de la suppression du projet';
+
+                    if (err instanceof Error) {
+                      message = err.message;
+                    }
+
+                    if (typeof err === 'object' && err !== null && 'response' in err) {
+                      const axiosErr = err as { response?: { data?: { message?: string } } };
+                      message = axiosErr.response?.data?.message ?? message;
+                    }
+
+                    toast.error(message);
+                  }
+                }}
+              >
+                Supprimer
+              </button>
+            </div>
+            <p>{project?.description}</p>
+          </div>
+
+          <div className="projet-page-head-right">
+            <button onClick={() => setIsCreateModalOpen(true)} aria-label="Créer une tâche">
+              Créer une tâche
             </button>
             <button
-              onClick={async () => {
-                try {
-                  if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
-                    await deleteProject(id);
-                    toast.success('Projet supprimé avec succès');
-                  }
-                } catch (err) {
-                  console.log('Erreur récupérée dans la page:', err);
-
-                  let message = 'Erreur lors de la suppression du projet';
-
-                  if (err instanceof Error) {
-                    message = err.message;
-                  }
-
-                  if (typeof err === 'object' && err !== null && 'response' in err) {
-                    const axiosErr = err as { response?: { data?: { message?: string } } };
-                    message = axiosErr.response?.data?.message ?? message;
-                  }
-
-                  toast.error(message);
-                }
-              }}
+              className="create-task-ai-btn"
+              aria-label="Créer une tâche avec l'IA"
+              onClick={() => setIsAiModalOpen(true)}
             >
-              Supprimer
+              <Image src="/images/star.png" alt="IA" width={21} height={21} />
+              IA
             </button>
           </div>
-          <p>{project?.description}</p>
-        </div>
+        </section>
 
-        <div className="projet-page-head-right">
-          <button onClick={() => setIsCreateModalOpen(true)} aria-label="Créer une tâche">
-            Créer une tâche
-          </button>
-          <button
-            className="create-task-ai-btn"
-            aria-label="Créer une tâche avec l'IA"
-            onClick={() => setIsAiModalOpen(true)}
-          >
-            <Image src="/images/star.png" alt="IA" width={21} height={21} />
-            IA
-          </button>
-        </div>
-      </section>
+        <section className="contributor-container">
+          <ContributorComponent owner={project?.owner} members={project?.members} />
+        </section>
 
-      <section className="contributor-container">
-        <ContributorComponent owner={project?.owner} members={project?.members} />
-      </section>
+        <section className="tasks-container">
+          <TaskComponent tasks={projectTasks} openEditModal={openEditModal} />
+        </section>
 
-      <section className="tasks-container">
-        <TaskComponent tasks={projectTasks} openEditModal={openEditModal} />
-      </section>
+        <CreateTaskModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          projectId={id}
+        />
 
-      <CreateTaskModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        projectId={id}
-      />
+        <CreateAiTaskModal
+          isOpen={isAiModalOpen}
+          onClose={() => setIsAiModalOpen(false)}
+          projectId={id}
+          projectTitle={project?.name}
+        />
 
-      <CreateAiTaskModal
-        isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
-        projectId={id}
-        projectTitle={project?.name}
-      />
+        <EditTaskModal
+          key={selectedTask?.id ?? 'no-task'}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          projectId={id}
+          task={selectedTask}
+        />
 
-      <EditTaskModal
-        key={selectedTask?.id ?? 'no-task'}
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        projectId={id}
-        task={selectedTask}
-      />
-
-      <EditProjectModal
-        key={project?.id ?? 'no-project'}
-        isOpen={isEditProjectModalOpen}
-        onClose={() => setIsEditProjectModalOpen(false)}
-        projectId={id}
-        project={project}
-        onUpdated={handleProjectUpdated}
-      />
-    </div>
+        <EditProjectModal
+          key={project?.id ?? 'no-project'}
+          isOpen={isEditProjectModalOpen}
+          onClose={() => setIsEditProjectModalOpen(false)}
+          projectId={id}
+          project={project}
+          onUpdated={handleProjectUpdated}
+        />
+      </div>
+    </ProtectedRoute>
   );
 }

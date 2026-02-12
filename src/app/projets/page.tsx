@@ -5,6 +5,7 @@ import CreateProjectModal from '@/app/components/Modals/CreateProjectModal/Creat
 import { useProjects } from '@/app/context/ProjectsContext';
 import { useTasks } from '@/app/context/TasksContext';
 import { useEffect, useState } from 'react';
+import ProtectedRoute from '../components/ProtectedRoute';
 import ProjectComponent from './components/ProjectComponent/ProjectComponent';
 import './page.scss';
 
@@ -23,37 +24,40 @@ export default function ProjectsPage() {
     });
   }, [projects, tasksByProjectId, fetchProjectTasks]);
 
-  if (isLoading) return <Loader />;
-  if (error) return <p>{error}</p>;
-
   return (
-    <div className="projets-page">
-      <div className="projets-page-head">
-        <div className="page-title">
-          <h4>Mes projets</h4>
-          <p>Gérez vos projets</p>
+    <ProtectedRoute>
+      {isLoading ? <Loader /> : error ? <p>{error}</p> : null}
+      <div className="projets-page">
+        <div className="projets-page-head">
+          <div className="page-title">
+            <h4>Mes projets</h4>
+            <p>Gérez vos projets</p>
+          </div>
+
+          <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
+            + Créer un projet
+          </button>
         </div>
 
-        <button aria-label="Créer un projet" onClick={() => setIsCreateModalOpen(true)}>
-          + Créer un projet
-        </button>
+        <section className="projets-list">
+          {projects.length === 0 ? (
+            <p>Aucun projet trouvé.</p>
+          ) : (
+            projects.map((project) => (
+              <ProjectComponent
+                key={project.id}
+                project={project}
+                tasks={tasksByProjectId[project.id] ?? []}
+              />
+            ))
+          )}
+        </section>
+
+        <CreateProjectModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </div>
-
-      <section className="projets-list">
-        {projects.length === 0 ? (
-          <p>Aucun projet trouvé.</p>
-        ) : (
-          projects.map((project) => (
-            <ProjectComponent
-              key={project.id}
-              project={project}
-              tasks={tasksByProjectId[project.id] ?? []}
-            />
-          ))
-        )}
-      </section>
-
-      <CreateProjectModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-    </div>
+    </ProtectedRoute>
   );
 }
