@@ -21,25 +21,20 @@
 
 .ai-modal-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 37px;
+  right: 37px;
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  border: 1px solid #eef2f7;
-  background: #fff;
+  background-color: transparent;
   display: grid;
   place-items: center;
   cursor: pointer;
-
-  &:hover {
-    background: #f8fafc;
-  }
 }
 
 .ai-modal-content {
   height: 100%;
-  padding: 36px 36px 24px;
+  padding: 79px 73px 50px 79px;
   display: flex;
   flex-direction: column;
 }
@@ -53,18 +48,14 @@
 .ai-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
-  h3 {
+  h4 {
     margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-black);
   }
-}
-
-.sparkle {
-  font-size: 18px;
 }
 
 .ai-error {
@@ -88,22 +79,23 @@
 }
 
 .ai-task-card {
-  border: 1px solid #eef2f7;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 18px 18px 14px;
   background: #fff;
 
-  h4 {
+  h5 {
     margin: 0 0 6px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #000000;
   }
 
   p {
+    font-family: 'Inter', sans-serif;
     margin: 0 0 12px;
-    font-size: 12px;
-    color: #64748b;
+    font-size: 0.875rem;
+    color: #6b7280;
   }
 }
 
@@ -145,17 +137,18 @@
 }
 
 .ai-add {
+  height: 50px;
+  width: 180px;
   border: 0;
-  background: #0f172a;
-  color: #fff;
+  font-size: 1rem;
+  background-color: var(--color-black);
+  color: #ffffff;
   border-radius: 10px;
-  padding: 12px 18px;
-  font-weight: 700;
+  transition: 0.3s;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
 
   &:hover {
-    background: #111c33;
+    background-color: #000000;
   }
 
   &:disabled {
@@ -193,7 +186,7 @@
   height: 34px;
   border-radius: 999px;
   border: 0;
-  background: #c2410c; // orange (comme ton mock)
+  background: #c2410c;
   color: #fff;
   display: grid;
   place-items: center;
@@ -243,5 +236,151 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .ai-modal-overlay {
+    padding: 16px;
+  }
+
+  .ai-modal {
+    width: min(760px, 96vw);
+    height: min(620px, 88vh);
+    border-radius: 12px;
+  }
+
+  .ai-modal-close {
+    top: 22px;
+    right: 22px;
+  }
+
+  .ai-modal-content {
+    padding: 56px 40px 32px 40px;
+  }
+
+  .ai-title {
+    h4 {
+      font-size: 1.35rem;
+    }
+  }
+
+  .ai-task-card {
+    padding: 16px 16px 12px;
+
+    h5 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .ai-add {
+    width: 200px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .ai-modal {
+    width: 100vw;
+    height: 92vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .ai-modal-close {
+    top: 18px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .ai-modal-content {
+    padding: 64px 18px 18px 18px;
+  }
+
+  .ai-title {
+    gap: 8px;
+
+    h4 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .ai-list {
+    margin-top: 16px;
+    padding-right: 0;
+    gap: 12px;
+  }
+
+  .ai-task-card {
+    padding: 14px 14px 12px;
+
+    h5 {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+      line-height: 1.35;
+    }
+  }
+
+  .ai-actions {
+    gap: 8px;
+  }
+
+  .ai-action {
+    padding: 6px 8px;
+  }
+
+  .ai-center {
+    padding: 14px 0 8px;
+  }
+
+  .ai-add {
+    width: 100%;
+    max-width: 420px;
+    height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .ai-bottom-bar {
+    padding: 10px 10px 10px 14px;
+    border-radius: 14px;
+    gap: 8px;
+
+    input {
+      font-size: 14px;
+    }
+  }
+
+  .ai-send {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ai-modal-content {
+    padding: 56px 14px 14px 14px;
+  }
+
+  .ai-title h4 {
+    font-size: 1.1rem;
+  }
+
+  .ai-task-card p {
+    font-size: 0.82rem;
+  }
+
+  .ai-add {
+    height: 46px;
   }
 }

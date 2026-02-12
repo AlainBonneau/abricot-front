@@ -2,6 +2,7 @@
 
 import { api } from '@/app/api/axiosConfig';
 import { Check, Pencil, SendHorizonal, Trash2, X } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './CreateAiTaskModal.scss';
 
@@ -20,7 +21,6 @@ type Props = {
   onClose: () => void;
   projectId: string;
   projectTitle?: string;
-  // Optionnel: callback pour refresh après création
   onTasksCreated?: () => void;
 };
 
@@ -54,7 +54,7 @@ export default function CreateAiTaskModal({
   const canSend = useMemo(() => prompt.trim().length >= 6, [prompt]);
   const canCreate = useMemo(() => tasks.length > 0 && !isCreating, [tasks.length, isCreating]);
 
-  // Focus + ESC
+  // Permet de fermer le modal avec la touche Echap et de focus l'input à l'ouverture
   useEffect(() => {
     if (!isOpen) return;
 
@@ -73,7 +73,7 @@ export default function CreateAiTaskModal({
     };
   }, [isOpen, onClose]);
 
-  // Reset state à l'ouverture du modal
+  // Reset le state à l'ouverture de la modal
   useEffect(() => {
     if (!isOpen) return;
     setPrompt('');
@@ -183,15 +183,23 @@ export default function CreateAiTaskModal({
           {step === 'PROMPT' ? (
             <div className="ai-step">
               <div className="ai-title">
-                <span className="sparkle">✨</span>
-                <h3>Créer une tâche</h3>
+                <span className="sparkle">
+                  <Image src="/images/ai-star.png" alt="Étincelle" width={21} height={21} />
+                </span>
+                <h4>Créer une tâche</h4>
               </div>
 
               {error && <p className="ai-error">{error}</p>}
 
               <div className="ai-empty-space" />
 
-              <div className="ai-bottom-bar">
+              <form
+                className="ai-bottom-bar"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  generateTasks();
+                }}
+              >
                 <input
                   ref={inputRef}
                   value={prompt}
@@ -201,6 +209,7 @@ export default function CreateAiTaskModal({
                 />
 
                 <button
+                  type="submit"
                   className="ai-send"
                   onClick={generateTasks}
                   disabled={!canSend || isGenerating}
@@ -212,13 +221,15 @@ export default function CreateAiTaskModal({
                     <SendHorizonal size={16} />
                   )}
                 </button>
-              </div>
+              </form>
             </div>
           ) : (
             <div className="ai-step">
               <div className="ai-title">
-                <span className="sparkle">✨</span>
-                <h3>Vos tâches...</h3>
+                <span className="sparkle">
+                  <Image src="/images/ai-star.png" alt="Étincelle" width={21} height={21} />
+                </span>
+                <h4>Vos tâches...</h4>
               </div>
 
               {error && <p className="ai-error">{error}</p>}
@@ -254,7 +265,7 @@ export default function CreateAiTaskModal({
                       </>
                     ) : (
                       <>
-                        <h4>{t.title}</h4>
+                        <h5>{t.title}</h5>
                         <p>{t.description || '—'}</p>
 
                         <div className="ai-actions">
