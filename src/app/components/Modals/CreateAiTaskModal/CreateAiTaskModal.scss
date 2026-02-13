@@ -61,7 +61,7 @@
 .ai-error {
   margin: 12px 0 0;
   color: #b91c1c;
-  font-size: 13px;
+  font-size: 0.875rem;
 }
 
 .ai-empty-space {
@@ -104,7 +104,7 @@
   align-items: center;
   gap: 10px;
   color: #94a3b8;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .ai-action {
@@ -172,7 +172,7 @@
     border: 0;
     outline: none;
     background: transparent;
-    font-size: 13px;
+    font-size: 0.875rem;
     color: #0f172a;
 
     &::placeholder {
@@ -218,7 +218,7 @@
   border-radius: 10px;
   padding: 10px 12px;
   outline: none;
-  font-size: 13px;
+  font-size: 0.875rem;
   color: #0f172a;
 }
 
@@ -357,7 +357,7 @@
     gap: 8px;
 
     input {
-      font-size: 14px;
+      font-size: 0.875rem;
     }
   }
 
