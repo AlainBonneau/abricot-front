@@ -22,6 +22,7 @@ type Props = {
   projectId: string;
   projectTitle?: string;
   onTasksCreated?: () => void;
+  refreshTasks: () => void;
 };
 
 // Permet de créer une tâche dans le projet via l'API
@@ -32,6 +33,7 @@ async function createTaskInProject(projectId: string, task: GeneratedTask) {
 export default function CreateAiTaskModal({
   isOpen,
   onClose,
+  refreshTasks,
   projectId,
   projectTitle,
   onTasksCreated,
@@ -157,6 +159,7 @@ export default function CreateAiTaskModal({
 
       onTasksCreated?.();
       onClose();
+      refreshTasks();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e?.message ?? 'Erreur lors de la création des tâches');

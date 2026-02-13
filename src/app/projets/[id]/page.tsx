@@ -61,9 +61,6 @@ export default function ProjectPage() {
     setProject((prev) => (prev ? { ...prev, ...next } : prev));
   };
 
-  // if (isLoading) return <Loader />;
-  // if (error) return <p>{error}</p>;
-
   return (
     <ProtectedRoute>
       {isLoading ? <Loader /> : error ? <p>{error}</p> : null}
@@ -141,6 +138,7 @@ export default function ProjectPage() {
         <CreateAiTaskModal
           isOpen={isAiModalOpen}
           onClose={() => setIsAiModalOpen(false)}
+          refreshTasks={() => fetchProjectTasks(id)}
           projectId={id}
           projectTitle={project?.name}
         />
