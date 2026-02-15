@@ -41,7 +41,7 @@
 }
 
 .no-tasks-message {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   text-align: center;

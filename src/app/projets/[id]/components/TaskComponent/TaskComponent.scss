@@ -20,7 +20,7 @@
 }
 
 .projet-task-head-left p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 1rem;
   color: var(--color-dark-grey);
 }
@@ -57,7 +57,7 @@
 
 .status-filter {
   appearance: none;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   padding: 23px 32px;
   border-radius: 8px;
   font-size: 0.875rem;

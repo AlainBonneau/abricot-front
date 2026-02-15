@@ -25,7 +25,7 @@
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   max-width: 95%;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
 }
 
 .project-progression {
@@ -69,7 +69,7 @@
   margin-top: 10px;
   font-size: 0.75rem;
   color: var(--color-dark-grey);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
 }
 
 .project-component-footer {
@@ -92,7 +92,7 @@
 
 .team-label {
   font-size: 0.75rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   color: var(--color-dark-grey);
 }
 
@@ -104,7 +104,7 @@
 }
 
 .avatar {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   width: 27px;
   height: 27px;
   padding: 8px 4px;
@@ -125,7 +125,7 @@
 }
 
 .owner-pill {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   height: 25px;
   width: 100px;
   padding: 4px 16px;

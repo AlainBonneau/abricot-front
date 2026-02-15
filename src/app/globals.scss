@@ -4,6 +4,9 @@
   --color-black: #1f1f1f;
   --color-grey: #e5e7eb;
   --color-dark-grey: #6b7280;
+
+  --font-manrope: 'Manrope', sans-serif;
+  --font-inter: 'Inter', sans-serif;
 }
 
 html,
@@ -14,7 +17,7 @@ body {
 
 body {
   background-color: var(--background);
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-manrope);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

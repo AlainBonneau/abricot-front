@@ -43,7 +43,7 @@
   }
 
   span {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-size: 0.875rem;
     padding: 4px 16px;
     border-radius: 999px;
@@ -92,7 +92,7 @@
   border: none;
   padding: 8px 12px;
   text-align: left;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: #111827;
   border-radius: 8px;
@@ -117,7 +117,7 @@
 
 /* Badge status */
 .status-pill {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   padding: 4px 16px;
   border-radius: 999px;
@@ -143,7 +143,7 @@
 
 /* Description */
 .item-description {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   margin-top: 2px;
@@ -152,7 +152,7 @@
 /* Échéance */
 .due-date-paragraph {
   margin-top: 18px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.75rem;
   color: var(--color-dark-grey);
   display: flex;
@@ -178,7 +178,7 @@
   gap: 10px;
 
   p {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-size: 0.75rem;
     color: var(--color-dark-grey);
     margin: 0;
@@ -199,7 +199,7 @@
 }
 
 .assigned-chip {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   background-color: var(--color-grey);
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   background-color: transparent;
   border-top: 1px solid #e5e7eb;
@@ -260,7 +260,7 @@
 }
 
 .no-comments {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.85rem;
   color: var(--color-dark-grey);
   padding: 12px;
@@ -285,20 +285,20 @@
 }
 
 .comment-author {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.85rem;
   font-weight: 600;
   color: #111827;
 }
 
 .comment-date {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.75rem;
   color: var(--color-dark-grey);
 }
 
 .comment-content {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.85rem;
   color: #374151;
   line-height: 1.4;
@@ -316,7 +316,7 @@
     padding: 0.75rem 0.875rem;
     border-radius: 0.625rem;
     border: 1px solid #e5e7eb;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-size: 0.875rem;
     color: #374151;
     transition:
@@ -340,7 +340,7 @@
     color: #ffffff;
     border: none;
     border-radius: 0.5rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -355,7 +355,7 @@
 }
 
 .no-tasks-found {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   text-align: center;

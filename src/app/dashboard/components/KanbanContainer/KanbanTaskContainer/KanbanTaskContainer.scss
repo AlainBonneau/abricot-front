@@ -32,7 +32,7 @@
 }
 
 .kanban-task-title p {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   font-size: 0.875rem;
   color: var(--color-dark-grey);
   margin-top: 2px;

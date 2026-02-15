@@ -49,7 +49,7 @@ nav {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   color: var(--color-orange);
   border-radius: 10px;
   transition:
@@ -161,7 +161,7 @@ nav a:hover .nav-logo {
   padding: 12px 12px;
   border-radius: 10px;
   color: var(--color-black);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
