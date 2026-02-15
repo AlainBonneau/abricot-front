@@ -27,7 +27,7 @@
 
 .list-title p {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--color-dark-grey);
 }
 
 .list-search {
@@ -43,7 +43,7 @@
 .no-tasks-message {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-dark-grey);
   text-align: center;
   padding: 20px;
 }

@@ -100,7 +100,7 @@ select {
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   background-color: #ffffff;
-  color: #6b7280;
+  color: var(--color-dark-grey);
   font-size: 0.75rem;
   cursor: pointer;
 }
@@ -180,7 +180,7 @@ select {
   border: none;
   background-color: #e5e7eb;
   transition: 0.2s;
-  color: #6b7280;
+  color: var(--color-dark-grey);
   cursor: not-allowed;
 }
 

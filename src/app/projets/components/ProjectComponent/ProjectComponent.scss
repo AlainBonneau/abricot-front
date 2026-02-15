@@ -23,7 +23,7 @@
 
 .project-description {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-dark-grey);
   max-width: 95%;
   font-family: 'Inter', sans-serif;
 }
@@ -41,7 +41,7 @@
 
 .progression-label {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-dark-grey);
 }
 
 .progression-value {
@@ -68,7 +68,7 @@
 .progression-sub {
   margin-top: 10px;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-dark-grey);
   font-family: 'Inter', sans-serif;
 }
 
@@ -93,7 +93,7 @@
 .team-label {
   font-size: 0.75rem;
   font-family: 'Inter', sans-serif;
-  color: #6b7280;
+  color: var(--color-dark-grey);
 }
 
 .team-row {
