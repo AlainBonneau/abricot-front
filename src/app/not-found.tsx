@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <section
       style={{
-        minHeight: 'calc(100vh - 78px)', // ajuste si besoin selon la hauteur de ta navbar
+        minHeight: 'calc(100vh - 78px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
