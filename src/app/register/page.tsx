@@ -2,16 +2,24 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './page.scss';
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [router, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +72,9 @@ export default function RegisterPage() {
                 required
               />
             </div>
-            <button type="submit" aria-label="S'inscrire">S&apos;inscrire</button>
+            <button type="submit" aria-label="S'inscrire">
+              S&apos;inscrire
+            </button>
             {error && <p className="error-message">{error}</p>}
           </form>
         </div>
