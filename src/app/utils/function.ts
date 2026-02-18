@@ -1,3 +1,4 @@
+// Fonction pour formater une date au format "1 janvier"
 export function dateFormatter(isoDateString: string): string {
   const date = new Date(isoDateString);
   return date.toLocaleDateString('fr-FR', {
@@ -6,6 +7,7 @@ export function dateFormatter(isoDateString: string): string {
   });
 }
 
+// Fonction pour formater le statut d'une tâche en français
 export function taskStatusFormatter(status: string): string {
   switch (status) {
     case 'TODO':
