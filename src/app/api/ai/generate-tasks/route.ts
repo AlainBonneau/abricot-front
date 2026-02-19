@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       {
         role: 'user',
         content:
-          'Génère des tâches actionnables UNIQUEMENT pour une app existante de gestion de projets/tâches (Abricot). ' +
+          'Génère des tâches actionnables UNIQUEMENT pour une app existante de gestion de projets/tâches.' +
           'Ne propose pas de setup général (NextAuth/Prisma etc.) si le projet existe déjà.',
       },
       {
