@@ -3,11 +3,11 @@
 import { api } from '@/app/api/axiosConfig';
 import { useProjects } from '@/app/context/ProjectsContext';
 import type { ProjectMember } from '@/app/types/project';
+import axios from 'axios';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import './EditProjectModal.scss';
-import axios from 'axios';
 
 type User = {
   id: string;
@@ -118,8 +118,7 @@ export default function EditProjectModal({
       try {
         const res = await api.get('/contributors');
         setUsers(res.data.data.contributors ?? []);
-      } catch (error) {
-        console.error('Erreur chargement /contributors', error);
+      } catch {
         setUsers([]);
       }
     };
@@ -132,8 +131,7 @@ export default function EditProjectModal({
 
         setSelectedContributorIds(ids);
         setInitialContributorIds(ids);
-      } catch (error) {
-        console.error('Erreur chargement contributeurs projet', error);
+      } catch {
         setSelectedContributorIds([]);
         setInitialContributorIds([]);
       }
@@ -177,10 +175,8 @@ export default function EditProjectModal({
       toast.success('Projet mis à jour avec succès');
       onClose();
     } catch (e) {
-      console.error(e);
-
       const message = axios.isAxiosError(e)
-        ? ((e.response?.data)?.message ?? 'Erreur lors de la mise à jour du projet')
+        ? (e.response?.data?.message ?? 'Erreur lors de la mise à jour du projet')
         : e instanceof Error
           ? e.message
           : 'Erreur lors de la mise à jour du projet';

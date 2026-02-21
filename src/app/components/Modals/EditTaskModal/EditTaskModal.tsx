@@ -145,8 +145,7 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
       try {
         const res = await api.get(`/projects/${projectId}/contributors`);
         setUsers(res.data.data.contributors ?? []);
-      } catch (error) {
-        console.error('Erreur chargement contributeurs', error);
+      } catch {
         setUsers([]);
       }
     };
@@ -171,8 +170,7 @@ export default function EditTaskModal({ isOpen, onClose, projectId, task }: Prop
       });
 
       onClose();
-    } catch (error) {
-      console.error('Erreur mise à jour tâche', error);
+    } catch {
       alert('Une erreur est survenue lors de la mise à jour de la tâche.');
     }
   };

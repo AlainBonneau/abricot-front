@@ -83,8 +83,6 @@ export default function ProjectPage() {
                       toast.success('Projet supprimé avec succès');
                     }
                   } catch (err) {
-                    console.log('Erreur récupérée dans la page:', err);
-
                     let message = 'Erreur lors de la suppression du projet';
 
                     if (err instanceof Error) {

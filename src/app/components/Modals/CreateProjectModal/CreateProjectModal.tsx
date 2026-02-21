@@ -112,8 +112,7 @@ export default function CreateProjectModal({ isOpen, onClose }: Props) {
 
         const res = await api.get('/contributors');
         setUsers(res.data.data.contributors ?? []);
-      } catch (e) {
-        console.error('Erreur chargement /contributors', e);
+      } catch {
         setUsers([]);
         setContributorsError('Impossible de charger la liste des contributeurs.');
       } finally {

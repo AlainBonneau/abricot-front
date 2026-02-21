@@ -34,9 +34,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       const data = response.data.data.projects;
 
       setProjects(data);
-    } catch (err) {
+    } catch {
       setError('Erreur lors du chargement des projets');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +59,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       return res.data?.data?.project ?? ({} as Project);
     } catch (err) {
       setError('Erreur lors de la création du projet');
-      console.error(err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -78,7 +76,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       await fetchProjects();
     } catch (err) {
       setError('Erreur lors de la mise à jour du projet');
-      console.error(err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -94,7 +91,6 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       router.push('/projets');
       await fetchProjects();
     } catch (err) {
-      console.error(err);
       setError('Erreur lors de la suppression du projet');
       throw err;
     } finally {

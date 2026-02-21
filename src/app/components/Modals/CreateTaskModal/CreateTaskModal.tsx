@@ -125,8 +125,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId }: Props) {
       try {
         const res = await api.get(`/projects/${projectId}/contributors`);
         setUsers(res.data.data.contributors ?? []);
-      } catch (error) {
-        console.error('Erreur chargement contributeurs', error);
+      } catch {
         setUsers([]);
       }
     };
