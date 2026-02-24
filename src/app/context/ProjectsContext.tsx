@@ -3,7 +3,7 @@
 import { api } from '@/app/api/axiosConfig';
 import type { CreateProjectPayload, Project, UpdateProjectPayload } from '@/app/types/project';
 import { useRouter } from 'next/navigation';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 type ProjectsContextType = {
   projects: Project[];
@@ -25,7 +25,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -39,67 +39,72 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  // création de projet
-  const createProject = async (payload: CreateProjectPayload) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const createProject = useCallback(
+    async (payload: CreateProjectPayload) => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      const res = await api.post('/projects', payload);
-      const created: Project | null = res.data?.data?.project ?? null;
+        const res = await api.post('/projects', payload);
+        const created: Project | null = res.data?.data?.project ?? null;
 
-      if (created) {
-        setProjects((prev) => [created, ...prev]);
-        return created;
+        if (created) {
+          setProjects((prev) => [created, ...prev]);
+          return created;
+        }
+
+        await fetchProjects();
+        return res.data?.data?.project ?? ({} as Project);
+      } catch (err) {
+        setError('Erreur lors de la création du projet');
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [fetchProjects],
+  );
 
-      await fetchProjects();
-      return res.data?.data?.project ?? ({} as Project);
-    } catch (err) {
-      setError('Erreur lors de la création du projet');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const updateProject = useCallback(
+    async (projectId: string, payload: UpdateProjectPayload) => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  // mise à jour de projet
-  const updateProject = async (projectId: string, payload: UpdateProjectPayload) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+        await api.put(`/projects/${projectId}`, payload);
+        await fetchProjects();
+      } catch (err) {
+        setError('Erreur lors de la mise à jour du projet');
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchProjects],
+  );
 
-      await api.put(`/projects/${projectId}`, payload);
+  const deleteProject = useCallback(
+    async (projectId: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      await fetchProjects();
-    } catch (err) {
-      setError('Erreur lors de la mise à jour du projet');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        await api.delete(`/projects/${projectId}`);
+        router.push('/projets');
+        await fetchProjects();
+      } catch (err) {
+        setError('Erreur lors de la suppression du projet');
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, fetchProjects],
+  );
 
-  // Suppression de projet
-  const deleteProject = async (projectId: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      await api.delete(`/projects/${projectId}`);
-      router.push('/projets');
-      await fetchProjects();
-    } catch (err) {
-      setError('Erreur lors de la suppression du projet');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Ajout d'un contributeur
-  const addContributor = async (projectId: string, email: string) => {
+  const addContributor = useCallback(async (projectId: string, email: string) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -110,10 +115,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  // Suppression d'un contributeur
-  const removeContributor = async (projectId: string, userId: string) => {
+  const removeContributor = useCallback(async (projectId: string, userId: string) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -124,35 +128,42 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [fetchProjects]);
 
-  return (
-    <ProjectsContext.Provider
-      value={{
-        projects,
-        isLoading,
-        error,
-        refreshProjects: fetchProjects,
-        updateProject,
-        addContributor,
-        removeContributor,
-        createProject,
-        deleteProject,
-      }}
-    >
-      {children}
-    </ProjectsContext.Provider>
+  const value = useMemo(
+    () => ({
+      projects,
+      isLoading,
+      error,
+      refreshProjects: fetchProjects,
+      updateProject,
+      addContributor,
+      removeContributor,
+      createProject,
+      deleteProject,
+    }),
+    [
+      projects,
+      isLoading,
+      error,
+      fetchProjects,
+      updateProject,
+      addContributor,
+      removeContributor,
+      createProject,
+      deleteProject,
+    ],
   );
+
+  return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;
 }
 
 export function useProjects() {
   const context = useContext(ProjectsContext);
-  if (!context) {
-    throw new Error('useProjects must be used within ProjectsProvider');
-  }
+  if (!context) throw new Error('useProjects must be used within ProjectsProvider');
   return context;
 }
