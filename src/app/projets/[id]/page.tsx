@@ -49,11 +49,7 @@ export default function ProjectPage() {
   };
 
   useEffect(() => {
-    if (!id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPageState('notFound');
-      return;
-    }
+    if (!id) return;
 
     let isMounted = true;
 
