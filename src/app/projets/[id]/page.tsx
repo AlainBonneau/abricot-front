@@ -10,7 +10,7 @@ import ProtectedRoute from '@/app/components/ProtectedRoute';
 import { useProjects } from '@/app/context/ProjectsContext';
 import { useTasks } from '@/app/context/TasksContext';
 import type { ProjectMember, ProjectResponse } from '@/app/types/project';
-import { Task } from '@/app/types/task';
+import type { Task } from '@/app/types/task';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,13 +19,24 @@ import ContributorComponent from './components/ContributorComponent/ContributorC
 import TaskComponent from './components/TaskComponent/TaskComponent';
 import './page.scss';
 
+type LoadState = 'loading' | 'ready' | 'notFound' | 'error';
+
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { projectTasks, fetchProjectTasks, isLoading, error } = useTasks();
+  const {
+    projectTasks,
+    fetchProjectTasks,
+    isLoading: tasksLoading,
+    error: tasksError,
+  } = useTasks();
   const { deleteProject } = useProjects();
 
   const [project, setProject] = useState<ProjectResponse['data']['project'] | null>(null);
+
+  const [pageState, setPageState] = useState<LoadState>('loading');
+  const [pageError, setPageError] = useState<string | null>(null);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -38,43 +49,98 @@ export default function ProjectPage() {
   };
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPageState('notFound');
+      return;
+    }
 
-    const fetchProject = async () => {
+    let isMounted = true;
+
+    const load = async () => {
       try {
+        setPageState('loading');
+        setPageError(null);
+
         const resProject = await api.get<ProjectResponse>(`/projects/${id}`);
-        setProject(resProject.data.data.project);
-      } catch {
+        const proj = resProject.data.data.project;
+
+        if (!isMounted) return;
+        setProject(proj);
+
+        await fetchProjectTasks(id);
+
+        if (!isMounted) return;
+        setPageState('ready');
+      } catch (err: unknown) {
+        if (!isMounted) return;
+
         setProject(null);
+
+        // Gestion spécifique du 404 pour afficher un message "Projet introuvable"
+        const status =
+          typeof err === 'object' && err !== null && 'response' in err
+            ? (err as { response?: { status?: number } }).response?.status
+            : undefined;
+
+        if (status === 404) {
+          setPageState('notFound');
+          return;
+        }
+
+        setPageState('error');
+        setPageError('Ce projet n’existe pas !');
       }
     };
 
-    fetchProject();
-    fetchProjectTasks(id);
+    load();
+
+    return () => {
+      isMounted = false;
+    };
   }, [id, fetchProjectTasks]);
 
-  const handleProjectUpdated = (next: {
-    name: string;
-    description: string;
-    members: ProjectMember[];
-  }) => {
-    setProject((prev) => (prev ? { ...prev, ...next } : prev));
-  };
+  if (pageState === 'loading') return <Loader />;
+
+  // Gestion du cas où le projet n'existe pas (404)
+  if (pageState === 'notFound') {
+    return (
+      <div className="projet-page">
+        <div className="project-error">
+          <h1>404 - Projet introuvable</h1>
+          <p>Ce projet n’existe pas ou a été supprimé.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Gestion d'erreur
+  if (pageState === 'error') {
+    return (
+      <div className="projet-page">
+        <div className="project-error">
+          <h1>Erreur</h1>
+          <p>{pageError}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProtectedRoute>
-      {isLoading ? <Loader /> : error ? <p>{error}</p> : null}
       <div className="projet-page">
         <section className="projet-page-head">
           <div className="projet-page-head-left">
             <div className="head-left-title">
               <h4>{project?.name}</h4>
+
               <button
                 aria-label="Modifier le nom ou la description du projet"
                 onClick={() => setIsEditProjectModalOpen(true)}
               >
                 Modifier
               </button>
+
               <button
                 onClick={async () => {
                   try {
@@ -85,9 +151,7 @@ export default function ProjectPage() {
                   } catch (err) {
                     let message = 'Erreur lors de la suppression du projet';
 
-                    if (err instanceof Error) {
-                      message = err.message;
-                    }
+                    if (err instanceof Error) message = err.message;
 
                     if (typeof err === 'object' && err !== null && 'response' in err) {
                       const axiosErr = err as { response?: { data?: { message?: string } } };
@@ -101,6 +165,7 @@ export default function ProjectPage() {
                 Supprimer
               </button>
             </div>
+
             <p>{project?.description}</p>
           </div>
 
@@ -108,6 +173,7 @@ export default function ProjectPage() {
             <button onClick={() => setIsCreateModalOpen(true)} aria-label="Créer une tâche">
               Créer une tâche
             </button>
+
             <button
               className="create-task-ai-btn"
               aria-label="Créer une tâche avec l'IA"
@@ -124,7 +190,13 @@ export default function ProjectPage() {
         </section>
 
         <section className="tasks-container">
-          <TaskComponent tasks={projectTasks} openEditModal={openEditModal} />
+          {tasksLoading ? (
+            <Loader />
+          ) : tasksError ? (
+            <p>{tasksError}</p>
+          ) : (
+            <TaskComponent tasks={projectTasks} openEditModal={openEditModal} />
+          )}
         </section>
 
         <CreateTaskModal
@@ -155,7 +227,9 @@ export default function ProjectPage() {
           onClose={() => setIsEditProjectModalOpen(false)}
           projectId={id}
           project={project}
-          onUpdated={handleProjectUpdated}
+          onUpdated={(next: { name: string; description: string; members: ProjectMember[] }) => {
+            setProject((prev) => (prev ? { ...prev, ...next } : prev));
+          }}
         />
       </div>
     </ProtectedRoute>
