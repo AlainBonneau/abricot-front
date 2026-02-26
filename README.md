@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Abricot – Application de Gestion de Projets avec Génération Automatique de Tâches par IA (Fini à 75%)
 
-## Getting Started
+Abricot est une application fullstack de gestion de projets collaboratifs permettant de créer, organiser et suivre des tâches.
 
-First, run the development server:
+Le projet intègre une fonctionnalité avancée de **génération automatique de tâches via IA (Mistral)**, transformant une description libre (prompt) en tâches structurées et directement exploitables dans le projet.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📌 Contexte du Projet
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Dans un contexte professionnel, la création et la structuration des tâches peuvent être longues et répétitives.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+L’objectif d’Abricot est de :
 
-## Learn More
+- Centraliser la gestion des projets
+- Faciliter la collaboration entre contributeurs
+- Automatiser la génération de tâches grâce à l’intelligence artificielle
+- Garder le contrôle humain avant intégration en base de données
 
-To learn more about Next.js, take a look at the following resources:
+L’IA agit comme **assistant décisionnel**, et non comme acteur autonome.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Stack Technique
 
-## Deploy on Vercel
+### Frontend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js (App Router)
+- TypeScript
+- SCSS
+- React Hooks
+- Gestion d’état locale
+- Accessibilité (ARIA, gestion focus, clavier)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Backend (via Next.js Route Handlers)
+
+- API Routes Next.js
+- Validation Zod
+- Prisma ORM
+- PostgreSQL
+
+### Intelligence Artificielle
+
+- Mistral (LLM)
+- Prompt engineering
+- Réponse JSON stricte
+- Validation avant insertion en base
+
+---
+
+## ✨ Fonctionnalités Principales
+
+### 🔐 Authentification
+
+- Gestion des utilisateurs
+- Protection des routes
+- Accès restreint aux projets
+
+### 📂 Gestion des Projets
+
+- Création et modification de projets
+- Gestion des membres (contributeurs)
+
+### 📝 Gestion des Tâches
+
+- Création de tâches avec :
+  - Titre
+  - Description
+  - Date d’échéance
+  - Statut (À faire, En cours, Terminée)
+- Assignation à un ou plusieurs utilisateurs
+- Ajout de commentaires collaboratifs
+
+---
+
+## 🤖 Génération Automatique de Tâches par IA
+
+### 1️⃣ Saisie du Prompt
+
+L’utilisateur décrit librement son besoin dans un champ dédié.
+
+### 2️⃣ Analyse par l’IA
+
+Une route serveur Next.js appelle le modèle Mistral :
+
+- Clé API sécurisée (jamais exposée côté client)
+- Température contrôlée
+- Format JSON strict imposé
+- Pas de texte hors JSON
+
+### 3️⃣ Validation des Données
+
+Les données générées sont validées avec **Zod** afin de :
+
+- Garantir le format attendu
+- Éviter les champs invalides
+- Assurer la cohérence métier
+
+### 4️⃣ Prévisualisation et Modification
+
+Avant insertion :
+
+- Suppression possible de tâches
+- Modification du titre et description
+- Ajustement de la date d’échéance
+- Assignation à des contributeurs
+
+### 5️⃣ Association au Projet
+
+Les tâches validées sont ensuite :
+
+- Associées automatiquement au projet en cours
+- Persistées en base via Prisma
+
+---
+
+## 🔒 Sécurité & Bonnes Pratiques
+
+- Clé API IA stockée dans `.env.local`
+- Appels IA effectués côté serveur uniquement
+- Gestion des erreurs (quota, indisponibilité API, réponse invalide)
+- Validation systématique des données IA
+- Gestion des états de chargement
+- Accessibilité (role="dialog", aria-label, gestion ESC)
