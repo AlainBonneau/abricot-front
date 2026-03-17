@@ -18,7 +18,7 @@ const splitName = (fullName?: string) => {
 };
 
 export default function ProfileForm({ user }: { user: User }) {
-  const { setUser, changePassword } = useAuth();
+  const { setUser, changePassword, logout } = useAuth();
 
   const initial = useMemo(() => {
     const { firstName, lastName } = splitName(user.name);
@@ -112,6 +112,14 @@ export default function ProfileForm({ user }: { user: User }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      toast.error('Erreur lors de la déconnexion. Veuillez réessayer.');
+    }
+  };
+
   return (
     <form className="profile-form" onSubmit={handleSubmit}>
       <div className="form-group">
@@ -152,96 +160,105 @@ export default function ProfileForm({ user }: { user: User }) {
         <input id="password" type="password" value="********" disabled aria-label="password" />
       </div>
 
-      <div className="password-section">
-        {!isPasswordOpen ? (
+      <div className="buttons-container">
+        <div className="password-section">
+          {!isPasswordOpen ? (
+            <button
+              type="button"
+              onClick={() => setIsPasswordOpen(true)}
+              disabled={isSaving}
+              aria-label="Modifier le mot de passe"
+            >
+              Modifier le mot de passe
+            </button>
+          ) : (
+            <div className="password-card" role="region" aria-label="Changement de mot de passe">
+              <h3>Changer le mot de passe</h3>
+
+              <div className="form-group">
+                <label htmlFor="currentPassword">Mot de passe actuel</label>
+                <input
+                  id="currentPassword"
+                  type="password"
+                  autoComplete="current-password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  disabled={isChangingPassword}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="newPassword">Nouveau mot de passe</label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={isChangingPassword}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confirmNewPassword">Confirmer le nouveau mot de passe</label>
+                <input
+                  id="confirmNewPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  disabled={isChangingPassword}
+                />
+              </div>
+
+              <div className="password-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPasswordOpen(false);
+                    setCurrentPassword('');
+                    setNewPassword('');
+                    setConfirmNewPassword('');
+                  }}
+                  disabled={isChangingPassword}
+                >
+                  Annuler
+                </button>
+
+                <button type="button" onClick={handleChangePassword} disabled={isChangingPassword}>
+                  {isChangingPassword ? 'Modification…' : 'Valider'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {isCustomizable ? (
           <button
-            type="button"
-            onClick={() => setIsPasswordOpen(true)}
+            type="submit"
             disabled={isSaving}
-            aria-label="Modifier le mot de passe"
+            aria-label="Enregistrer les modifications du profil"
           >
-            Modifier le mot de passe
+            {isSaving ? 'Enregistrement…' : 'Enregistrer'}
           </button>
         ) : (
-          <div className="password-card" role="region" aria-label="Changement de mot de passe">
-            <h3>Changer le mot de passe</h3>
-
-            <div className="form-group">
-              <label htmlFor="currentPassword">Mot de passe actuel</label>
-              <input
-                id="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                disabled={isChangingPassword}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="newPassword">Nouveau mot de passe</label>
-              <input
-                id="newPassword"
-                type="password"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={isChangingPassword}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmNewPassword">Confirmer le nouveau mot de passe</label>
-              <input
-                id="confirmNewPassword"
-                type="password"
-                autoComplete="new-password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                disabled={isChangingPassword}
-              />
-            </div>
-
-            <div className="password-actions">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsPasswordOpen(false);
-                  setCurrentPassword('');
-                  setNewPassword('');
-                  setConfirmNewPassword('');
-                }}
-                disabled={isChangingPassword}
-              >
-                Annuler
-              </button>
-
-              <button type="button" onClick={handleChangePassword} disabled={isChangingPassword}>
-                {isChangingPassword ? 'Modification…' : 'Valider'}
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={handleIsCustomizable}
+            disabled={isSaving}
+            aria-label="Modifier les informations du profil"
+          >
+            Modifier les informations
+          </button>
         )}
-      </div>
-
-      {isCustomizable ? (
-        <button
-          type="submit"
-          disabled={isSaving}
-          aria-label="Enregistrer les modifications du profil"
-        >
-          {isSaving ? 'Enregistrement…' : 'Enregistrer'}
-        </button>
-      ) : (
         <button
           type="button"
-          onClick={handleIsCustomizable}
-          disabled={isSaving}
-          aria-label="Modifier les informations du profil"
+          onClick={handleLogout}
+          aria-label="Bouton de déconnexion"
         >
-          Modifier les informations
+          Déconnexion
         </button>
-      )}
+      </div>
     </form>
   );
 }

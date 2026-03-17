@@ -3,7 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../api/axiosConfig';
-import { login as loginService, register as registerService } from '../services/auth.service';
+import {
+  login as loginService,
+  logout as logoutService,
+  register as registerService,
+} from '../services/auth.service';
 import type { User } from '../types/user';
 
 type AuthContextType = {
@@ -12,7 +16,7 @@ type AuthContextType = {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 };
@@ -24,24 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Recharger l'état au refresh
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        const freshUser = await getMyProfile();
+        const freshUser = await getMe();
         setUser(freshUser);
-        localStorage.setItem('user', JSON.stringify(freshUser));
       } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -51,40 +43,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth();
   }, []);
 
-  // Connexion
   const login = async (email: string, password: string) => {
-    const { token, user } = await loginService(email, password);
-
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-
+    const user = await loginService(email, password);
     setUser(user);
     router.push('/profil');
   };
 
-  // Inscription
   const register = async (name: string, email: string, password: string) => {
-    const { token, user } = await registerService(name, email, password);
-
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-
+    const user = await registerService(name, email, password);
     setUser(user);
     router.push('/dashboard');
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    router.push('/login');
+  const logout = async () => {
+    try {
+      await logoutService();
+    } catch {
+      // même si la requête logout échoue, on nettoie l'état local
+    } finally {
+      setUser(null);
+      router.push('/login');
+    }
   };
 
-  // Changer le mot de passe
   const changePassword = async (currentPassword: string, newPassword: string) => {
     try {
       await api.put('/auth/password', { currentPassword, newPassword });
-      logout();
+      await logout();
     } catch {
       throw new Error('Failed to change password');
     }
@@ -108,8 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export async function getMyProfile(): Promise<User> {
-  const { data } = await api.get('/auth/profile');
+export async function getMe(): Promise<User> {
+  const { data } = await api.get('/auth/me');
   return data.data.user;
 }
 
