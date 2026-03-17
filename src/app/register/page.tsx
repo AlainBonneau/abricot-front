@@ -27,8 +27,13 @@ export default function RegisterPage() {
 
     try {
       await register(name, email, password);
-    } catch {
-      setError('Nom, email ou mot de passe invalide.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.data?.errors?.[0]?.message ||
+        err.response?.data?.message ||
+        'Une erreur est survenue';
+      setError(errorMessage);
     }
   };
 
