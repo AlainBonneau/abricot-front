@@ -1,6 +1,7 @@
 'use client';
 
 import { api } from '@/app/api/axiosConfig';
+import ConfirmModal from '@/app/components/ConfirmModal/ConfirmModal';
 import Loader from '@/app/components/Loader/Loader';
 import CreateAiTaskModal from '@/app/components/Modals/CreateAiTaskModal/CreateAiTaskModal';
 import CreateTaskModal from '@/app/components/Modals/CreateTaskModal/CreateTaskModal';
@@ -42,6 +43,9 @@ export default function ProjectPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => Promise<void> | void>(() => {});
 
   const openEditModal = (task: Task) => {
     setSelectedTask(task);
@@ -138,24 +142,27 @@ export default function ProjectPage() {
               </button>
 
               <button
-                onClick={async () => {
-                  try {
-                    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+                onClick={() => {
+                  setConfirmAction(() => async () => {
+                    try {
                       await deleteProject(id);
                       toast.success('Projet supprimé avec succès');
+                      window.location.href = '/projets';
+                    } catch (err) {
+                      let message = 'Erreur lors de la suppression du projet';
+
+                      if (err instanceof Error) message = err.message;
+
+                      if (typeof err === 'object' && err !== null && 'response' in err) {
+                        const axiosErr = err as { response?: { data?: { message?: string } } };
+                        message = axiosErr.response?.data?.message ?? message;
+                      }
+
+                      toast.error(message);
                     }
-                  } catch (err) {
-                    let message = 'Erreur lors de la suppression du projet';
+                  });
 
-                    if (err instanceof Error) message = err.message;
-
-                    if (typeof err === 'object' && err !== null && 'response' in err) {
-                      const axiosErr = err as { response?: { data?: { message?: string } } };
-                      message = axiosErr.response?.data?.message ?? message;
-                    }
-
-                    toast.error(message);
-                  }
+                  setIsConfirmOpen(true);
                 }}
               >
                 Supprimer
@@ -225,6 +232,19 @@ export default function ProjectPage() {
           project={project}
           onUpdated={(next: { name: string; description: string; members: ProjectMember[] }) => {
             setProject((prev) => (prev ? { ...prev, ...next } : prev));
+          }}
+        />
+
+        <ConfirmModal
+          isOpen={isConfirmOpen}
+          question="Êtes-vous sûr de vouloir supprimer ce projet ?"
+          onCancel={() => {
+            setIsConfirmOpen(false);
+            toast('Suppression annulée');
+          }}
+          onConfirm={async () => {
+            await confirmAction();
+            setIsConfirmOpen(false);
           }}
         />
       </div>
