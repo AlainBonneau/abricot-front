@@ -1,3 +1,4 @@
+import ConfirmModal from '@/app/components/ConfirmModal/ConfirmModal';
 import { useTasks } from '@/app/context/TasksContext';
 import type { Task } from '@/app/types/task';
 import { dateFormatter, getInitials, taskStatusFormatter } from '@/app/utils/function';
@@ -17,6 +18,9 @@ export default function Tasks({
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
 
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => Promise<void> | void>(() => {});
+
   const toggleComments = (taskId: string) => {
     setOpenTaskId((prev) => (prev === taskId ? null : taskId));
   };
@@ -24,15 +28,7 @@ export default function Tasks({
   const toggleOptions = (taskId: string) => {
     setOpenOptionsId((prev) => (prev === taskId ? null : taskId));
   };
-
-  const handleDeleteTask = async (taskId: string, projectId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
-      await deleteTask(projectId, taskId);
-      toast.success('Tâche supprimée avec succès');
-    }
-  };
-
-  // Ajouter un commentaire à une tâche
+  // Ajouter un commetntaire à une âche
   const handleAddComment = async (
     e: React.FormEvent<HTMLFormElement>,
     taskId: string,
@@ -89,7 +85,17 @@ export default function Tasks({
                       </button>
                       <button
                         className="item-options-action delete"
-                        onClick={() => handleDeleteTask(task.id, task.projectId)}
+                        onClick={() => {
+                          setConfirmAction(() => async () => {
+                            try {
+                              await deleteTask(task.projectId, task.id);
+                              toast.success('Tâche supprimée avec succès');
+                            } catch (error) {
+                              console.error('Erreur lors de la suppression de la tâche', error);
+                            }
+                          });
+                          setIsConfirmOpen(true);
+                        }}
                         aria-label="Supprimer la tâche"
                       >
                         Supprimer
@@ -157,6 +163,15 @@ export default function Tasks({
           </div>
         );
       })}{' '}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        question="Êtes-vous sûr de vouloir supprimer cette tâche ?"
+        onConfirm={() => {
+          confirmAction();
+          setIsConfirmOpen(false);
+        }}
+        onCancel={() => setIsConfirmOpen(false)}
+      />{' '}
     </div>
   );
 }
