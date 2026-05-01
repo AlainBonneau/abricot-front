@@ -10,73 +10,33 @@
   flex-direction: column;
 }
 
-.form-group label {
-  font-size: 0.875rem;
-  font-family: var(--font-inter);
-}
-
 .profile-form input {
-  background-color: #ffffff;
-  padding: 0 10px;
   height: 52px;
+  padding: 0 10px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  font-size: 0.75rem;
 }
 
 .profile-form button {
-  background-color: var(--color-black);
-  color: #ffffff;
+  background-color: #1f1f1f;
+  color: white;
   border-radius: 10px;
   height: 50px;
   width: 242px;
-  font-family: var(--font-inter);
-  font-size: 1rem;
 }
 
 .buttons-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
 }
 
-.password-card {
-  margin-top: 0.75rem;
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fff;
-
-  h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #111827;
-  }
-}
-
-.password-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-// Responsive styles
 @media (max-width: 1050px) {
   .buttons-container {
     flex-direction: column;
-    justify-content: center;
   }
 
   .profile-form button {
-    padding: 0 8px;
     width: 100%;
-  }
-
-  .password-actions {
-    flex-direction: column;
-    align-items: stretch;
   }
 }
